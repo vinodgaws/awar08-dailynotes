@@ -226,6 +226,76 @@ NAT Has 2 modes.
 2. Private : Helps to communicate instances internally. Wont provide interent. 
 
 
+=====
+
+Network ACLs : NACL : 
+
+By defaultly, all subnets will be part of default NACL.. All traffic is allowed.. So, no filter applied by defaultly.
+
+New network ACls blocks all traffic by default.
+
+Security groups are stateful, Means, We need to take care about the inbound rule, outbound will be allowed automatically as system remembers the traffic flow.
+--> Support Only ALLOW. We cannot add DENY at security group level.
+
+NACLs are stateless, Means, We need to take care about the inbound and outbound rules, as NACLs dont remember in incoming flow and outgoing flow. 
+--> NACLs Supports ALLOW and DENY.. 
+
+** We need to open Ephemeral ports (Temporary).. 
+Total Ports : 0 - 65535
+Ephemeral ports : 1024 - 65535
+
+http: 80
+https: 443
+rdp: 3389
+mysql: 3306
+mssql: 1433
+
+--> 1 subnet can be member of 1 NACL at a time. 
+
+
+===========
+
+VPC Endpoints : 
+
+--> Gateway Endpoints : Created by us and Managed by AWS. We need to pay for Data Transfer only. We can use this for S3, S3express and DynamoDB
+
+--> Interface Endpoints : Created by US and We have option to choose the subnet. We need tio pay for Interface created, also, data transfer fee applicable.
+
+
+** Even after atatching an IAM ROLE, Without Internet, We cannot access s3 / other services, from private EC2 Instance running in same aws account.
+--> NAt gateway not required to access s3, with this process.
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
