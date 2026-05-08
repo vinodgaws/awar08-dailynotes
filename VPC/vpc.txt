@@ -228,6 +228,8 @@ NAT Has 2 modes.
 
 =====
 
+D: 07/05/2026
+
 Network ACLs : NACL : 
 
 By defaultly, all subnets will be part of default NACL.. All traffic is allowed.. So, no filter applied by defaultly.
@@ -265,19 +267,77 @@ VPC Endpoints :
 ** Even after atatching an IAM ROLE, Without Internet, We cannot access s3 / other services, from private EC2 Instance running in same aws account.
 --> NAt gateway not required to access s3, with this process.
 
- 
+===========
+
+D: 08/05/2026 
+
+VPC Peering : Helps to enable communciation between multiple VPCs. 
+
+--> If you want to establish VPC peering between 2 VPC, CIDR range should not conflict. 
+--> VPC Peering is Non-Transitive peering.
+
+
+					Requester VPC 				Accepter VPC
+Acc ID : 			655700896650				359642223341
+VPC ID : 			vpc-0bbc8f892a66513c7		vpc-01e9e4fc8c220fc25
+CIDR Range : 		192.168.0.0/24				10.0.0.0/16
+Region : 			ap-south-1					ap-south-1
+
+Step 1 : Create a peering connection from Requester account.
+Step 2 : Switch to / Inform to Accepter account to accept the peering request.
+Step 3 : At Requester VPC, Update the route tables with Accepter VPC CIDR range via Peering conenction.
+Step 4 : At Accepter VPC, Update the route tables with Requester VPC CIDR range via Peering conenction.
+
+
+=====================
+
+Central NW Account = Dedicated aws account, where we create/run Transit gateway and share it with all other aws accounts.
+
+Step 1 : Create a TGW in central networking account.
+
+Step 2 : using RAM service, share it with all the member accounts. In Other account, choose the region and navigate to RAM service, accept the share.
+
+Step 3 : In Central NW account, Create a TGW atatchment with local VPCs desired subnets.
+
+Step 4 : In Member account, Create a tgw atatchement with local VPC subnet.
+
+Step 5 : Switch to Central NW VPC TGW, Choose the attachment and accept it. (Accpeting Step 4 )
+
+Step 6 : Edit members account route tables with Central NW account VPC CIDR.
+
+Step 7 : Edit Central NW VPC account route tables with Member account VPC CIDR.
+
+============
+
+For IPv4, TO provide internet to private subnet instance, we have "NAt gateway", in similar manner.. For IPv6, We have "Egress only internet gateway".
+
+---------
+**
+Can i extend existing VPC CIDR range.?
+Ans : yes.. New CIDR should not collide with existing CIDR.
+
+--> We cannot extend existing subnets with new CIDR.. Create new subnets, with CIDR ranges.
+
+------
+
+
+VPN : Virtual private Network : 
+
+
+site-to-site vpn : 
+Step 1 :  customer gateway: office firewall device publi ip
+Step 2 :  VPG / Virtual private gateway : 
+Step 3 : Create site-to-site vpn with CGW and VPG
 
 
 
-
-
-
-
-
-
-
-
-
+cisco
+fortinet
+palo alto
+yamaha
+dell sonicwall
+f5
+watchguard
 
 
 
