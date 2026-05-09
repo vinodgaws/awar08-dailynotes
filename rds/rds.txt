@@ -1,0 +1,101 @@
+
+
+RDS : Relational Databse Servcie : 
+
+AWS Supports multiple DB Engines.
+
+1. Amazon Aurora ( Mysql compatable edition & postgresql compatable edition )
+2. MySQL : 3306			: Mysql workbench / dbeaver
+3. MSSQL : 1433			: SSMS (SQL Server Management Studio)
+4. MariaDB : 3306		: workbench 
+5. PostGRE SQL : 5432	: PgAdmin 
+6. Oracle DB : 1521		: sql developer / Toad
+7. IBM DB2 : 50001 (ssl), 50000 (non-ssl) : IBM Enterprise tool
+
+
+OnPremise Self Managed DB : H/W, OS, OS Patch, DB Install, DN HA, DB FT, Db backups..
+EC2 Instance hosted DB : OS Patch, DB Install, DN HA, DB FT, Db kackups..
+Amazon RDS Hosted DB : Everything AWS manages, we just need to enable/disable the features.
+
+We dont have any option to login to underlying OS, where our DB is running. 
+
+----
+
+Pre-Req : Create a DB Subnet group with Custom VPC's DB Subnets.
+
+Create a Security group for our DB: 
+
+
+---
+
+For DBs, We get a DNS endpoint, Its hard to remember. 
+
+Endpoint : mywtcdb.c1ekg4m6e0fi.ap-south-1.rds.amazonaws.com --> rds.awswithavinashreddy.com
+Username : dbadmin
+Password : Avinash12345
+
+
+dnf install mariadb105 -y
+
+which mysql 
+
+mysql -h rds.awswithavinashreddy.com -u dbadmin -P 3306 -p
+
+SHOW DATABASES;
+
+CREATE DATABASE mystudentdb;
+
+USE mystudentdb;
+
+CREATE TABLE users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(100),
+	age INT
+);
+
+DESC users;
+
+INSERT INTO users (name, age) VALUES ('Avinash' , '35');
+INSERT INTO users (name, age) VALUES ('Anudeep' , '33');
+INSERT INTO users (name, age) VALUES ('Aravind' , '31');
+
+SELECT * FROM users;
+SELECT * FROM users LIMIT 1;
+SELECT name FROM users WHERE age > 33;
+
+UPDATE users SET age = 36 WHERE name = 'Avinash';
+
+DELETE FROM users WHERE name = 'Avinash';
+
+DROP DATABASE mydb;
+
+TRUNCATE TABLE <table_name>			--> To delete all the data from a table.
+
+EXIT;
+--------
+
+
+SELECT user, host FROM mysql.user;
+
+CREATE USER 'anudeep'@'%' IDENTIFIED BY 'Avinash1234';
+
+GRANT SELECT, INSERT, UPDATE ON mydb.* TO 'anudeep'@'%';
+
+FLUSH PRIVILEGES;
+
+
+==========
+
+
+
+
+
+
+
+
+
+
+
+
+
+
