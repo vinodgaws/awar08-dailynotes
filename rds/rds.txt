@@ -41,9 +41,13 @@ which mysql
 
 mysql -h rds.awswithavinashreddy.com -u dbadmin -P 3306 -p
 
+
+mysql -h multi-az-test-restore.cjmu48ickkmj.ap-south-1.rds.amazonaws.com  -u dbadmin -P 3306 -p
+
 SHOW DATABASES;
 
 CREATE DATABASE mystudentdb;
+
 
 USE mystudentdb;
 
@@ -67,7 +71,7 @@ UPDATE users SET age = 36 WHERE name = 'Avinash';
 
 DELETE FROM users WHERE name = 'Avinash';
 
-DROP DATABASE mydb;
+DROP DATABASE mystudentdb;
 
 TRUNCATE TABLE <table_name>			--> To delete all the data from a table.
 
@@ -86,12 +90,41 @@ FLUSH PRIVILEGES;
 
 ==========
 
+Multi-AZ DB instance deployment (2 instances) : Creates a primary DB instance with a non-readable standby instance in a separate Availability Zone. 
+This setup provides:
+99.95% uptime
+Redundancy across Availability Zones
+
+
+Multi-AZ DB cluster deployment (3 instances) : Creates a primary DB instance with two readable standbys in separate Availability Zones. 
+This setup provides:
+99.95% uptime
+Redundancy across Availability Zones
+Increased read capacity
+Reduced write latency
 
 
 
 
 
+mywtcdb.c1ekg4m6e0fi.ap-south-1.rds.amazonaws.com
 
+192.168.0.143
+
+
+ROle : Instance
+
+
+RDS Backtrack is a specialized feature for Amazon Aurora MySQL-Compatible Edition that allows you to "rewind" a database cluster to a specific point in time without needing to restore from a backup.
+
+
+--> Max 72 hours
+
+
+---
+
+PITR : Point In Time Restore
+Restore to Point In Time : 
 
 
 
