@@ -166,6 +166,82 @@ full load + cdc --> Once all changes then continue with ongoing changes.
 Homogeneous Migration : Same class source to target migration (mysql --> mysql)
 Heterogeneous Migration : Diff class source and target migration (mongodb --> postgre)
 
+=============
+
+
+OLTP : Online Transaction Processing : Run the business : RDS
+-> Banking transactions
+-> Online Shopping / e-commerce 
+-> ATM withdwawels
+
+--> We can perform insert/udpates
+--> Mainly focused on operational data
+
+
+OLAP : Online Analytical processing : Redshift, Snowflake, databriks
+
+Used for analytics and reporting on large datasets.
+
+--> sales reports
+--> trending analytics
+--> Business intelligence dashboards
+
+--> Reads huge amaounts of hiustorical data
+--> Complex queries
+--> perform Analyrics and decision making
+
+---
+
+Redshift : offers OLAP on AWS. It can integrate well with aws services i.e; iam, s3, rds, dms.. 
+
+
+Workload Management (WLM) in Amazon Redshift helps you control how queries use cluster resources — so one heavy query doesn't choke everything else.
+
+
+The Problem it Solves
+Imagine 10 users running queries at the same time — some are small dashboard queries (fast, lightweight) and some are massive ETL jobs (slow, resource-hungry). Without WLM, they all compete equally for resources, causing everything to slow down.
+
+How WLM Works
+WLM lets you create queues — each queue gets a dedicated slice of memory and concurrency slots.
+
+A queue = a lane on a highway
+Each lane has a speed limit (memory %) and max vehicles (concurrency slots)
+Queries are routed to the right lane based on rules
+
+Auto WLM : Redshift automatically manages memory & concurrency — hands-free
+Manual WLM : You define queues, memory %, and concurrency slots yourself
+
+
+Query Queue — A holding lane for queries; up to 8 queues (+ 1 default Superuser queue)
+Concurrency Slots — How many queries can run simultaneously in a queue
+Memory % — How much cluster memory that queue gets
+Queue Rules — Route queries by user group or query group label
+Short Query Acceleration (SQA) — Automatically fast-tracks short queries so they don't wait behind big ones
+
+
+===========
+
+Elasticache : It is a caching service in AWS. It can cache RDS information and provide query results to the end customers.  (RDS)
+
+--> Redis OSS : 
+--> valkey Cache : * Recommeded 
+--> MemchacheD : 
+
+=========
+
+DynamoDB : DynamoDB has a caching service, its name is "DAX - DynamoDb Accelerator"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

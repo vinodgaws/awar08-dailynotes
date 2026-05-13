@@ -1,0 +1,70 @@
+
+
+S3 : Simple storage servcie
+
+--> We can store flat files. We call it as objects.
+--> We have to create a bucket. 
+
+bucket = folder / directory.. 
+
+Global namespace : By default, S3 creates general purpose buckets in the global namespace.
+
+Account Regional namespace (recommended) : General purpose buckets created in your account Regional namespace are unique to your account. These buckets can never be created by another AWS account.
+
+
+Min: 3 char
+Max : 63 char
+should nto start with .
+should not end with .
+no .. (adjesent ..)
+should not resemble ip format
+
+--> We have unlimited storage in S3 platform.
+
+
+Min Obj size : 0 bytes
+Max obj size : 50 TB (earlier its 5 TB)
+
+
+Virtual Path's wont work if we have . in bucket name
+https://<bucket-name>.s3.<region-name>.amazonaws.com/objectname
+https://<bucket-name>.s3.amazonaws.com/<object-name>
+
+Standard path: https://s3.<region-code>.amazonaws.com/<bucket-name>/<object-name> 
+
+----
+By defualt, all our data is private, No public access is allowed at bucket level.
+
+Account level block public access :  OFF By default.. 
+Bucket level block public access : 
+Object level settings : 
+
+
+--
+
+step 1 : Turn off "block public access" at bucket level.
+step 2 : 2 options to make an object public
+	2.1 Bucket policy (later)
+	2.2 using ACLs.. 		--> Disabled by defaultly, Enable it. (Object Ownership --> ACLs enabled --> save)
+
+step 3 : choose the object and 
+
+---
+
+S3 Pricing : 
+
+How many API calls happening on our data. (PUT / GET / UPDATE)
+How much data transferring
+How much data you are storing (gb/tb days)
+What storage class you are using (Standard / IA / Glacier / IT)
+
+
+
+
+
+
+
+
+
+
+
