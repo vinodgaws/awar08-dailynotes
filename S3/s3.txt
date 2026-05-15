@@ -145,16 +145,92 @@ Source bucket already has some data, you decided to enable replication to anothe
 Ans: We can create a one time batch job and replicate existing data.
 
 
+=================
+
+D: 15/05/2026
 
 
+Encryption : 
+
+In-Transit encryption / At flight encryption : When the data is in travel state to s3 platform/webserver, Data will be encrypted. (webserver --> ssl/tls)
+
+Client Side Encryption / CSE : Before uploading data to s3 platform, We can use our own encryption method and we can encrypt the data.. (Customer Responsibility)
+
+Server Side Encryption / SSE : When data is in s3 platform, we can apply encry methods. We have multiple options.
+
+Key Material (public key and private Key)
+
+Server-side encryption with Amazon S3 managed keys (SSE-S3) : Default encryption method.. 
+--> S3 genrates and manages the key material
+--> Whoever has access to s3 platform, they can decrypt the data.. No addl permisisons required.
+--> Suitable for public sharable data.. 
+--> No direct access to key material to view/modify/delete/rotate.
+
+---
+
+SSE-KMS - DMK (Default Master Key)..
+--> KMS Service generates and manages the key material
+--> Whoever has access to s3 platform, they can decrypt the data.. No addl permisisons required.
+--> No direct access to key material to view/modify/delete/rotate.
+--> We cannot make object public.. 
+--> THis key creates automatically, whenever we started using the s3 servcie. 
+
+---
+
+SSE-KMS CMK (Customer Managed Key)..
+--> Customer has to Create the KMS Key and KMS Manages the key material.. We can use this key for multiple servcies.. 
+--> Along with S3 service access, User/role should have kms key usage permissions to decrypt the data..
+--> No direct access to key material to view/delete, Customer can rotate the key material. 
+--> We cannot make object public.. 
 
 
+---
+
+SSE-KMS C (Customer Provided Key)..
+--> Customer has to Create the KMS Key and Customer has to Manages the key material.. He need to upload the wrapped key to KMS servcie, so kms use this key to encrypt the data.. 
+--> Along with S3 service access, User/role should have kms key usage permissions to decrypt the data..
+--> Customer has access to key material to view/delete/rotate the key material. 
+--> We cannot make object public.. 
+--> https://www.youtube.com/watch?v=r17Z75TqjU0
 
 
+---
+S3 supports Symmetric keys.
+
+Symmetric: A single key used for encrypting and decrypting data or generating and verifying HMAC codes.
+Asymmetric: A public and private key pair used for encrypting and decrypting data, signing and verifying messages, or deriving shared secrets
 
 
+Key creation steps:
+
+1. Configure key : Selected "Symmetric" and "Encrypt and decrypt"
+2. Provide key alias and description, Tags
+3. Define key administrative permissions (Avinash_T)
+4. Define key usage permissions (Avinash_T)
+5. Review the key policy and create
 
 
+================
+
+S3 Default Performance : 
+
+3,500 PUT Operations per second per prefix
+5,500 GET Operations per second per prefix
+
+--> use more prefixes (folders), 
+--> Every prefix supports 3,500 PUT and 5,500 GET
+
+--> Add randomness to the object names (yr/month/date/app-safas , db-sahdgj)
+
+================
+
+S3 static website hosting : 
+
+--> if i host website in s3, i get default s3 perf for my website as well.
+--> No need to run a server/instance to deliver a static website. No backend storage cost,NO public IP cost
+
+--> We can map domain name to s3 static website.. But, Your bucket name and domain name should be same..
+--> We cannot map SSL/TLS certificate when we host using s3 static website hosting. (Depends on CLoudfront to map)
 
 
 
