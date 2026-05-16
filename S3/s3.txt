@@ -209,7 +209,6 @@ Key creation steps:
 4. Define key usage permissions (Avinash_T)
 5. Review the key policy and create
 
-
 ================
 
 S3 Default Performance : 
@@ -231,6 +230,81 @@ S3 static website hosting :
 
 --> We can map domain name to s3 static website.. But, Your bucket name and domain name should be same..
 --> We cannot map SSL/TLS certificate when we host using s3 static website hosting. (Depends on CLoudfront to map)
+
+================
+
+D: 16/05/2026
+
+
+I have an IAM user, who has S3FullAccess.. But one bucket hosted some confidential infroamtion, i dont want to allow this user to perform data list/view/open/delete. 
+
+1. Bucket ARN : arn:aws:s3:::avinash-s3-demo-160626
+2. Princiapl : user / group
+3. Effect : allow / Deny
+4. Actions to take effect : PutObject, GetObject, DeleteObject
+
+Bucket level operations : arn:aws:s3:::avinash-s3-demo-160626
+Object level operations : arn:aws:s3:::avinash-s3-demo-160626/* (arn:aws:s3:::avinash-s3-demo-160626/folder)
+
+
+https://awspolicygen.s3.amazonaws.com/policygen.html
+
+1. arn:aws:s3:::avinash-s3-demo-160626,arn:aws:s3:::avinash-s3-demo-160626/*
+2. arn:aws:iam::655700896650:user/s3-admin
+3. Deny
+4. PutObject, ListObject, GetObject, DeleteObject
+
+----
+Make an entire bucket public
+----
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::avinash-s3-demo-160626/*"
+        }
+    ]
+}
+
+-----
+
+Task : One bucket should be accesable for only 1 particular user.. Even if other users has "s3FullAccess" / "AdministratorACcess" they should not able to work on this bucket.
+
+---
+
+Transfer acceleration: We can uplaod data to s3 via aws edge locations/cloudfront. The more distance between your network and s3, the better results when you enable this feature.
+
+
+https://s3-accelerate-speedtest.s3-accelerate.amazonaws.com/en/accelerate-speed-comparsion.html?region=ap-south-1&origBucketName=avinash
+
+---
+
+Object lock : Store objects using a write-once-read-many (WORM) model to help you prevent objects from being deleted or overwritten for a fixed amount of time or indefinitely. Object Lock works only in versioned buckets.
+
+Governance: Users with specific IAM permissions can overwrite or delete protected object versions during the retention period.
+
+Compliance: No users can overwrite or delete protected object versions during the retention period. (incuding root user)
+
+
+========
+
+S3 Directory buckets : high-perf, low-latency with single AZ.. 
+
+---
+
+Table buckets : This can store tabular data, that optimised for analytical engines. 
+--> Best for Apache iceburg tables / data lakes / athena analytics / redshift querying.
+
+---
+
+S3 vector Buckets : used for storing and searchng vector embeddings for AI application. 
+
+----
 
 
 
