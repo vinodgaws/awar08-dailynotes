@@ -1,0 +1,109 @@
+
+Cloudtrail : Contineously logs your AWS account activity.
+
+--> Enabled by default. It can store all logs for 90 days without any addl configuration.
+--> We cna send logs to S3 bucket, We do have option to send it to cloudwatch and configure retention period / life cycle management rule.
+--> We cna filter logs by using multiple options i.e; username, accesskey, eventname, event source..
+
+With CT, we can log only aws activities, not inside ec2 instance / s3 object / lambda data events.. 
+
+4 types of trails available:
+
+1. Management trail : captures aws operations performed on aws console. (instance launch / s3 delete / rds create, iam user creation / delete)
+2. Data trail : s3, lambda and dynamodb : Enbale data logs for current & future buckets.
+3. Insight events : helps to identify abonormal traffic , errors or user behavious.. 
+4. Network trails : Network flow events.. 
+
+** We can enable logs at Organisations level.. 
+Organisation: we can combine multiple aws accounts into one umbrilla.
+
+
+----
+
+An IAM users credentails got compromised. How you troubleshoot it.?
+
+--> Disable the User, Reset the password, ENable MFA.
+--> Did that user created any other users.?
+--> What are the other activities the user performed using this compromised cred. ()
+--> Inspect VPC flow logs for unusual traffic, Apply NACLs to block traffic / allow from only trsuted networks.
+--> Incident investigation / Remediation / Root Cause Analysis.
+
+----
+
+Amazon Config : Tracks all the resource changes and flag resource as non-compliant if its not following the rules we configured in config service.
+
+Compliant : 
+Non-Compliant : 
+
+PCI DSS : Payment card industry, Data Secutiry standards
+HIPAA	: Health insurance probability and accountability act
+SOC2 	: Service Organisation Control 2
+CIS 	: Center for Internet Security
+GDPR	: Genertal Data protection Regulations
+ISO 27001
+
+----
+
+Trusted Advisor : provide suggestions on best practices we have to follow on some of the core areas.
+
+Cost optimisation			: Over provisioned resources 
+performance					: Under provisioned resources (bottleneck)
+Security					: SG open for everyone, snapshot public
+Fault toralance				: Application spanning across multiple AZs
+service limits				: hitting aws soft limits
+Operational excellence		: logs 
+
+--> periodically we inspect trusted advisory checks and plan changes based on findings.
+
+=========
+
+AWS Shield & AWS SHield Advanced : DDoS : Distributed deniel of service
+
+--> ASG (Auto Scaling Group)
+--> Cloudfront (Has inbuild capability to handle the DDoS Attacks)
+--> Shield Advanced
+
+AWS Shield Advanced : 3000$/Month.. With 1 yr commitment.. 
+
+========
+
+AWS WAF (Web Application Firewall) : Protect your web applications from common web exploits
+AWS WAF is a web application firewall service that lets you monitor web requests forwarded to your AWS resources. You can protect CloudFront distributions globally, or regional resources including API Gateway APIs, Application Load Balancers, AppSync GraphQL APIs, Cognito user pools, App Runner services, Verified Access instances, and AWS Amplify applications. Protection is based on conditions you specify, such as originating IP addresses and request patterns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
