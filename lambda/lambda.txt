@@ -1,0 +1,95 @@
+
+
+EC2 : OS Patching, Instance scaling operations i.e; vertical scaling / horizontal scaling.. 
+--> Long running application.. Support unlimited execution time.. 
+--> We get charged for instance run hours. 
+
+Lambda : Fully managed serverless service by AWS. Pay for the duration you run your code.. 
+--> THis is more suitable for short lived and event driven tasks.. 
+
+Lambda supports 
+--> .net core
+--> java
+--> nodejs
+--> python
+--> Ruby
+--> Amazon linux 2023
+
+
+1. Durable Execution : Designed for long running workflows, Fault tolerance executions and resumable tasks.
+--> Traditional lambda has limitation.. 1. Max 15 min execution, It restart the process from beginning, if it timeout.. 
+
+2. EC2 Capacity Providers : 
+--> Generally lambda function runs in aws managed infrastructure.. With this option we can run lambda function inside an ec2 instance.. 
+
+---
+
+lambda_handler : This is the entry point to the lambda function. 
+
+
+Invocation Models : 
+
+Synchronous Invocations : THe caller sends a request for response, lambda runs the function and return the result directly to the caller. If the function fails, the caller is responsible for retrying..
+--> API Gateway, ALB, Function URL.. 
+
+
+Asynchronous Invocations : THe caller sends a request for response, lambda returns with 202 status code, runs the functionand return the result directly to the caller. If the function fails, it send the event to DLQ (Dead letter Queue).. It retries 2 times.. 
+--> SQS, SNS, Eventbridge
+
+Event Source Mapping : Lambda polls the source for new records and invokes the lambda when it finds any records / batch of records.. 
+--> SQS, DynamoDB, MSK (Managed Kafka), Kenesis.. 
+
+---
+
+Lambda invocation log output:
+
+REPORT RequestId: cf8a6808-94f1-445b-9e47-1536934a283c	
+Duration: 2.26 ms	
+Billed Duration: 118 ms			--> $
+Memory Size: 128 MB	
+Max Memory Used: 40 MB			--> $
+Init Duration: 115.54 ms		--> $
+
+
+Limitations on Lambda function: 
+Max timeout is 15 min (overcome it with Durable Execution)
+Deployment package size : 50 MB (Direct upload) / 250 MB via S3 upload.. 
+Cuncurrent execution: 1000 per region
+layers: 5 layers (250 MB)
+
+---
+
+Lambda function will have 3 phases in lifecycle.
+
+1. INIT Phase : Initialisation Phase : Downloads the code, Initialize the runtime and then runs the code..
+2. INVOKE Phase : Executes the handler function. This is the active phase where our code/business logic runs.. 
+3. SHUTDOWN Phase : After a period of inactivity, AWS destroys the environemnt and free the resource. 
+
+
+cold start : INIT + INVOKE : First invoke or invoking after long inactive gap.. we get high latency.. (using car after long period)
+
+warm start : INVOKE Phase Only : Susequent invocations when env is alive.. Lower latency.. (using car daily)
+
+How to reduce cold start period / duration: 
+--> Provisioned cuncurrancy
+--> SnapStart **
+
+============================
+
+Along with lambda cration, we get an IAM role, that role will have permisisons on cloudwatch logs.. 
+
+Make sure to add required permissions at lambda role to access aws services/resources. 
+
+
+---
+
+Some of the lambda function take more than default configured 3 seconds to complete the job, we need to update the lambda timeout accordingly. 
+
+---
+
+Memory : Set memory to between 128 MB and 10240 MB
+
+---
+
+Can we run a lambda function inside a VPC. 
+
