@@ -1,0 +1,235 @@
+#Simple YAML for for fruits
+fruit: apple
+color: red
+origin: simla
+
+---
+
+#List format of fruits
+fruits:
+  - apple
+  - banana
+  - cherry
+  - mango
+
+---
+
+#flowstyle
+
+fruits: [ apple, banana, cherry, mango ]
+
+---
+
+#Data Types in YAML
+
+fruit: apple #string
+price: 20 #number
+is_available: true #boolean
+
+---
+
+#collections
+
+fruits:
+  - apple
+  - banana
+  - mango
+  - orange
+apple: 
+  color: red
+  price: 20
+  is_available: true
+Mango: 
+  color: yellow
+  price: 10
+  is_available: true
+
+---
+
+#Nested details
+
+fruits_details:
+  apple:
+    color: red
+    price: 20
+    is_available: false
+  banana: 
+    color: yellow
+    price: 2
+    is_available: true
+fruits_origin: {apple: kashmir, banana: africa, mango: andhra}
+
+---
+
+#Referenace mechanism in YAML
+
+fruits:
+  healthyfruit: apple
+  bestfruit: mango
+  citrusfruit: kiwi
+
+AvinashFruitChoice:
+  Firstchoice: !Ref bestfruit
+  SecondChoice: !Ref citrusfruit
+  Thirdchoice: !Ref healthyfruit
+
+krishnaFruitchoice: 
+  Firstchoice: !Ref bestfruit
+  SecondChoice: !Ref healthyfruit
+  Thirdchoice: !Ref citrusfruit
+
+VinodFruitchoice: 
+  Firstchoice: !Ref citrusfruit
+  SecondChoice: !Ref bestfruit
+  Thirdchoice: !Ref bestfruit
+
+-----
+
+# =========================================================
+# Hyderabad Fruit Shop - Complete YAML Example
+# =========================================================
+
+shop:
+  name: Fresh Basket Fruit Shop
+  location:
+    city: Hyderabad
+    area: Kukatpally
+    state: Telangana
+    pincode: 500072
+
+  owner:
+    name: Avinash
+    contact: +91-9876543210
+    is_open: true
+
+# ---------------------------------------------------------
+# Fruits Available (List Format)
+# ---------------------------------------------------------
+
+available_fruits:
+  - apple
+  - banana
+  - mango
+  - orange
+  - kiwi
+  - grapes
+
+# ---------------------------------------------------------
+# Flow Style Example
+# ---------------------------------------------------------
+
+seasonal_fruits: [ mango, watermelon, muskmelon, litchi ]
+
+# ---------------------------------------------------------
+# Fruit Details with Data Types & Nested Collections
+# ---------------------------------------------------------
+
+fruit_details:
+
+  apple:
+    color: red
+    origin: kashmir
+    price_per_kg: 220
+    stock_kg: 50
+    is_available: true
+    imported: false
+
+  banana:
+    color: yellow
+    origin: andhra
+    price_per_dozen: 60
+    stock_dozen: 40
+    is_available: true
+    imported: false
+
+  mango:
+    color: yellow
+    origin: banganapalle
+    price_per_kg: 180
+    stock_kg: 100
+    is_available: true
+    imported: false
+
+  orange:
+    color: orange
+    origin: nagpur
+    price_per_kg: 140
+    stock_kg: 35
+    is_available: true
+    imported: false
+
+  kiwi:
+    color: green
+    origin: new_zealand
+    price_per_box: 450
+    stock_boxes: 10
+    is_available: true
+    imported: true
+
+# ---------------------------------------------------------
+# Customer Favorite Fruits
+# ---------------------------------------------------------
+
+customer_favorites:
+  healthyfruit: &healthyfruit apple
+  bestseller: &bestseller mango
+  importedfruit: &importedfruit kiwi
+
+# ---------------------------------------------------------
+# Customer Orders using YAML References
+# ---------------------------------------------------------
+
+customers:
+
+  Avinash:
+    first_choice: *bestseller
+    second_choice: *healthyfruit
+    third_choice: *importedfruit
+
+  Krishna:
+    first_choice: *healthyfruit
+    second_choice: *bestseller
+    third_choice: *importedfruit
+
+  Vinod:
+    first_choice: *importedfruit
+    second_choice: *bestseller
+    third_choice: *healthyfruit
+
+# ---------------------------------------------------------
+# Billing Information
+# ---------------------------------------------------------
+
+today_sales:
+  total_customers: 120
+  total_orders: 175
+  total_revenue: 45200
+  shop_rating: 4.8
+
+# ---------------------------------------------------------
+# Delivery Information
+# ---------------------------------------------------------
+
+delivery:
+  available: true
+  areas_served:
+    - Kukatpally
+    - KPHB
+    - Miyapur
+    - HiTech City
+    - JNTU
+  delivery_charges: 30
+
+# ---------------------------------------------------------
+# Offers Section
+# ---------------------------------------------------------
+
+offers:
+  weekend_offer:
+    description: "Buy 2kg Mangoes and get 1kg Bananas Free"
+    valid_till: "2026-05-31"
+
+  member_discount:
+    percentage: 10
+    applicable_for: premium_customers
+

@@ -1,0 +1,23 @@
+Parameters:
+    InstanceType:
+        Type: String
+        Description: Enter the ec2 instance type you want to launch
+        Default: t3.micro
+
+    AvailabilityZone:
+        Type: String
+        Description: Enter the AZ for your instance
+        Default: ap-south-1a
+
+Resources: 
+    MyProdEC2Instance:
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: ami-09ed39e30153c3bf9
+            AvailabilityZone: !Ref AvailabilityZone
+            InstanceType: !Ref InstanceType
+            KeyName: awar08-kp
+Outputs:
+    Ec2InstanceID:
+        Description: The instance ID
+        Value: !Ref MyProdEC2Instance

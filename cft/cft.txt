@@ -1,0 +1,55 @@
+
+
+IaC : Infrastructure as Code : We can write code and by executing that code, we can create resources.. 
+
+ClickOps : Performing resource creation and other operations using browser. 
+DevOps : Use Code to create resources, DOnt create resources manually.. 
+
+Cloudformation Supports 2 Programing languages: 
+--> JSON : You have to take care spacing, brackets, , (I felt hard)
+--> YAML : Indentation matters here
+
+Install visual studio code : 
+--> Install aws toolkit
+--> Install copilot
+--> install yaml
+
+
+YAML is a combination of key and value pair.
+
+---
+
+To create a cloudformation to create aws resources, we have 3 sections.
+
+1. Resources			--> Mandatory
+2. Parameterise
+3. output
+
+Resource type format: 
+service-provider::service-name::data-type-name
+AWS::S3::Bucket
+AWS::EC2::Instance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
