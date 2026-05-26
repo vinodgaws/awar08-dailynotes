@@ -1,0 +1,46 @@
+Parameters:
+    Environment:
+        Type: String
+        Description: Enter the environment name
+        Default: dev
+        AllowedValues:
+            - dev
+            - uat
+            - prd
+
+    AvailabilityZone:
+        Type: String
+        Description: Enter the AZ for your instance
+        Default: ap-south-1a
+        AllowedValues:
+            - ap-south-1a
+
+    KeyPair:
+        Type: String
+        Description: Enter the key pair name
+        Default: awar08-kp
+
+Mappings:
+    EnvToInstanceType:
+        dev:
+            InstanceType: t3.micro
+        uat:
+            InstanceType: t3.micro
+        prd:
+            InstanceType: c7i-flex.large
+
+Resources: 
+    MyProdEC2Instance:
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: ami-09ed39e30153c3bf9
+            AvailabilityZone: !Ref AvailabilityZone
+            InstanceType: !FindInMap [EnvToInstanceType, !Ref Environment, InstanceType]
+            KeyName: !Ref KeyPair
+            Tags:
+                - Key: Name
+                  Value: !Sub "mapping-demo-${Environment}"
+Outputs:
+    Ec2InstanceID:
+        Description: The instance ID
+        Value: !Ref MyProdEC2Instance

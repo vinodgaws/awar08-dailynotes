@@ -1,0 +1,33 @@
+Parameters:
+    InstanceType:
+        Type: AWS::SSM::Parameter::Value<String>
+        Description: Enter the ec2 instance type you want to launch
+        Default: /aviz/ec2/instancetype
+
+    AvailabilityZone:
+        Type: String
+        Description: Enter the AZ for your instance
+        Default: ap-south-1a
+        AllowedValues:
+            - ap-south-1a
+
+    KeyPair:
+        Type: String
+        Description: Enter the AZ for your instance
+        Default: awar08-kp
+
+Resources: 
+    MyProdEC2Instance:
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64}}"
+            AvailabilityZone: !Ref AvailabilityZone
+            InstanceType: !Ref InstanceType
+            KeyName: !Ref KeyPair
+            Tags:
+                - Key: Name
+                  Value: aviz-dynamic-demo
+Outputs:
+    Ec2InstanceID:
+        Description: The instance ID
+        Value: !Ref MyProdEC2Instance
