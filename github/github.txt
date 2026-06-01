@@ -1,0 +1,91 @@
+
+
+https://git-scm.com/		--> Download and install git (In your laptop)
+
+
+
+1973 - SCCM Source Code Control System 	- 1 file
+	RCM Revision control system 		- x File, 1 Directory
+	CVS Cuncurrent Version System		- X File, x Directories, 1 User
+
+2000 - SVN Subversion					- x file, x Dir, x User
+2005 - GIT Global Information Tracker	- Advantages i.e; branching
+
+
+Dev 1 --> Dev 1 Laptop		--> Central location over internet
+Dev 2 --> Dev 2 Laptop		--> Central location over internet
+
+---------
+
+git config --global user.name "Aviz"
+git config --global user.email "avizway@gmail.com"
+git config --list
+git config --global --edit
+git config --global core.editor "vim"
+
+touch index.html
+touch style.css
+
+git add index.html					--> Add inde.html file to staging area
+
+git rm --cached index.html			--> Remove the file from staging area
+
+git add . 
+
+git reset --soft HEAD~1 			--> The command git reset --soft HEAD~1 undoes your last commit but keeps all your changes staged and ready to commit again.
+
+git push : fatal: No configured push destination.
+
+
+1. Create a github account
+2. Create a repository
+3. Add te github repo as remote 
+	git remote add origin https://github.com/username/reponame.git
+4. Push the local repo to github
+	git push -u origin master
+
+git remote add origin git@github.com:avizway1/awar08-gitdemo.git
+
+git push --set-upstream origin master
+
+
+==========
+
+push an existing repository from the command line
+git remote add origin https://github.com/avizway1/awar08-gitdemo.git
+git branch -M main
+git push -u origin main
+
+==========
+
+echo "# awar08-gitdemo" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/avizway1/awar08-gitdemo.git
+git push -u origin main
+
+===========
+
+SSH based Authentication : 
+
+ls -al ~/.ssh				--> TO verify existing keys
+
+ssh-keygen -t ed25519 -C "avizway@gmail.com"
+
+above command generates these 2 files:  id_ed25519	id_ed25519.pub
+
+Verifying ssh agent:
+
+eval "$(ssh-agent -s)"
+
+ssh-add ~/.ssh/id_ed25519
+
+cat id_ed25519.pub --> Copy the public key and store it in github ssh keys option under account settings.
+
+ssh -T git@github.com
+
+
+
+
