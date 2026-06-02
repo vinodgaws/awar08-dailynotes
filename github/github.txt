@@ -87,5 +87,169 @@ cat id_ed25519.pub --> Copy the public key and store it in github ssh keys optio
 ssh -T git@github.com
 
 
+===========
+
+D: 02/06/2026
+
+git fetch					--> verify our codebase with central repo
+
+git pull					--> Get the latest to our local 
+
+git clone 					--> Get the entire codebase to new users/developers laptop.
+
+
+TBD : Trunk Based Development : its a git branching strategy where developers work on a "single main branch" and merge the small, frequent, bug fixed, feature code into main branch.. 
+
+
+git branch feature-x		--> Create a branch with name "feature-x"
+
+git checkout feature-x		--> Switch to the branch "feature-x"
+	(or)
+git switch feature-x
+
+git checkout -b feature-y	--> Create a branch named "feature-y" and switch to it. 
+
+git branch -d feature-y		--> Delete the feature-y branch
+
+----
+
+Step 1 : Create a repo and a file in central repo. (info.txt)
+
+Step 2 : Clone it on ec2 instance
+
+git clone
+cd repo
+git checkout -b branch1
+
+vim info.txt
+
+git add . && git commit -m "msg"
+
+**Do not push or merge.
+
+Step 3 : switch to your laptop, clone the repo
+edit the info.txt file
+
+git add . && git commit -m "msg" && git push origin main
+
+----
+
+Step 4 : Switch back to ec2 instance.
+
+git switch main
+git pull origin main
+
+git merge branch1
+
+Now you get the conflict..
+
+
+===========
+
+
+Git merge : bringing all chapters together. 
+
+You and your friend writing a book.
+you wrote 3 chapters
+your friend wrote 2 chapters - at sametime. 
+you both decided to combine for one final book.
+--> If we use merge, it shows as you wrote 3 chapters, your frined wrote 2 chapters.
+
+Git Rebase : Rewriting the story as one smooth timeline. 
+You and your friend writing a book.
+you wrote 3 chapters
+your friend wrote 2 chapters - at sametime. 
+you both decided to combine for one final book.
+--> If we use rebase, it shows as you wrote 3 chapters first then your frined wrote 2 chapters for clean and lenear history.
+
+
+--> use rebase when you want : "simplify the history", "The branch is only used by you" and To avoid unnessesary "merge commits" and to make it look like a straight story.
+
+
+
+==========
+
+rebase lab: 
+
+echo "C1" > main.txt && git add . && git commit -m "C1"
+echo "C2" >> main.txt && git add . && git commit -m "C2"
+echo "C3" >> main.txt && git add . && git commit -m "C3"
+
+
+git checkout -b feature HEAD~1			--> create a branch one commit before the latest. (commit happens from C2, Not from C3)
+
+
+echo "D" > feature.txt && git add . && git commit -m "D - feature commit"
+echo "E" > feature.txt && git add . && git commit -m "E - feature commit"
+
+
+git log --oneline --graph --all
+
+* 2c466e6 (HEAD -> feature) E - feature commit
+* ec33f65 D - feature commit
+| * 219cbe0 (master) C3
+|/  
+* 2af8911 C2
+* d990c2d C1
+
+----
+
+--> Doing rebase : git rebase master
+
+
+git log --oneline --graph --all
+
+* 1cf51a5 (HEAD -> feature) E - feature commit
+* d34e631 D - feature commit
+* 219cbe0 (master) C3
+* 2af8911 C2
+* d990c2d C1
+
+Golden Rule / Thumb Rule: Never rebase a branch that has been pushed to a shared/poublic repository. 
+
+Why Rebasing Shared Branches Causes Chaos
+--> It Changes Commit Hashes
+--> It Destroys Teammates' Base History
+--> It Multiplies Duplicate Commits
+--> It Requires Dangerous Force Pushing
+
+Summary Rule of Thumb:
+Local-only branches: Rebase as much as you like to clean up your history before anyone else sees it.
+Shared/Public branches: Always use git merge or git pull to integrate changes safely without breaking your team's workflow
+
+====================
+
+git stash : 
+
+Imagine you are working on some changes and suddenly your team member asked you to switch to another branch to fix a imp bug.
+
+--> you can't commit yet, as your chnages are not ready, but you dont want to lose them.
+so, stash your changes temp, then switch to other branch and fix it.. come back and unstash it.
+
+git stash			--> stash the changes
+git stash apply		--> Apply the stashed changes
+git stash list		--> list the stashes
+git stash show -p	--> show stash content
+git stash drop		--> Drop a stash after apply
+git stash push -m "msg"	--> create a stash with custom msg
+git stash pop		-> apply and remove the stash
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
