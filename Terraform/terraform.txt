@@ -99,6 +99,58 @@ terraform plan
 terraform apply
 terraform destroy
 
+==============================
+
+D: 05/06/2026
+
+terraform output
+
+terraform output -json
+
+we can pass sensitive = true in output section to hide the valkues, to read the values use -json argument.
+
+
+-----
+
+meta-arguments: 
+
+count: 
+for_each: 
+depends_on:
+lifecycle: 
+      prevent_destroy       = true
+      create_before_destroy = true
+      ignore_changes        = [tags]
+Providers
+
+----
+
+terraform  Default Limit: Terraform processes up to 10 resources simultaneously by default.
+
+terraform apply -parallelism=5
+
+----------
+
+To delete a block where we have not defined the "prevent_destroy", we need to use "-target" option.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

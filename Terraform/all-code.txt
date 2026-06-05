@@ -10,3 +10,224 @@ resource "aws_instance" "webserver" {
     Name = "My-updated-tf-server"
   }
 }
+
+=============
+
+Code with output block
+==============
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-0685bcc683dadb6b9"
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "My-web-server"
+  }
+}
+
+resource "aws_s3_bucket" "mybucket" {
+  bucket = "my-tf-05062026-demo"
+}
+
+output "instance_id" {
+  value = aws_instance.webserver.id
+}
+
+output "web_Instance_Public_ip" {
+  description = "Tis is my webserver public ip"
+  value = aws_instance.webserver.public_ip
+}
+
+output "web_Instance_Private_ip" {
+  description = "Tis is my webserver private ip"
+  value = aws_instance.webserver.private_ip
+}
+
+output "MyBucketName" {
+  value = aws_s3_bucket.mybucket.id
+}
+
+
+================
+COUNT - META-ARGUMENT-EXAMPLE
+---------------
+
+provider
+ "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  count = 2
+  ami           = "ami-0685bcc683dadb6b9"
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "My-web-server-${count.index + 1}"
+  }
+}
+
+-------------
+FOR-EACH META ARGUMENT
+-------------
+provider "aws" {
+  region = "ap-south-1"
+}
+
+locals {
+  servers = {
+    dev = "t3.micro"
+    uat = "t3.small"
+    # prd = "c7i-flex.large"
+  }
+}
+
+resource "aws_instance" "webserver" {
+  for_each = local.servers
+  ami           = "ami-0685bcc683dadb6b9"
+  instance_type = each.value
+
+  tags = {
+    Name = "${each.key}-server"
+    Environment = each.key
+  }
+}
+
+----------
+
+for-each another example (with toset)
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  for_each = toset(["dev", "uat", "prd"])
+  ami           = "ami-0685bcc683dadb6b9"
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "${each.key}-server"
+    Environment = each.key
+  }
+}
+
+=====================
+depends-on
+---------
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-0685bcc683dadb6b9"
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "My-web-server"
+  }
+}
+
+resource "aws_s3_bucket" "mybucket" {
+  bucket = "my-tf-05062026-demo"
+  depends_on = [ aws_instance.webserver ]
+}
+
+=====================
+
+ignore changes:
+
+-------
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-0685bcc683dadb6b9"
+  instance_type = "t3.small"
+
+  tags = {
+    Name = "My-web-server"
+  }
+lifecycle {
+  prevent_destroy = true
+  ignore_changes = [ instance_type ]
+}
+
+}
+
+--------------
+Create_before_destroy
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami           = "ami-07a00cf47dbbc844c"
+  instance_type = "t3.small"
+
+  tags = {
+    Name = "My-web-server"
+  }
+lifecycle {
+  ignore_changes = [ instance_type ]
+  create_before_destroy = true
+}
+
+}
+
+resource "aws_s3_bucket" "mybucket" {
+  bucket = "my-tf-05062026-demo"
+  depends_on = [ aws_instance.webserver ]
+}
+
+
+---------------
+
+Providers:
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+provider "aws" {
+  region = "us-east-1"
+  alias = "usa"
+  # profile = "lms"
+}
+
+resource "aws_instance" "indserver" {
+  ami           = "ami-07a00cf47dbbc844c"
+  instance_type = "t3.small"
+  tags = {
+    Name = "My-mumbai-server"
+  }
+}
+
+resource "aws_instance" "usaserver" {
+  provider = aws.usa
+  ami           = "ami-00e801948462f718a"
+  instance_type = "t3.small"
+  tags = {
+    Name = "My-usa-server"
+  }
+}
+
+==========================
+
+
+
+
+
+
+
+
+
+
+
