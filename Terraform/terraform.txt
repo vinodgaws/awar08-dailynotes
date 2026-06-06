@@ -116,12 +116,12 @@ meta-arguments:
 
 count: 
 for_each: 
-depends_on:
+depends_on: 
 lifecycle: 
       prevent_destroy       = true
       create_before_destroy = true
       ignore_changes        = [tags]
-Providers
+Providers: 
 
 ----
 
@@ -133,11 +133,44 @@ terraform apply -parallelism=5
 
 To delete a block where we have not defined the "prevent_destroy", we need to use "-target" option.
 
+===================
 
+D: 06/06/2026
 
+remote exec : 
 
+userdata : 
 
+---
 
+Version constraint is recommended method to maintain same version across the project. 
+
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "6.48.0"
+    }
+  }
+}
+
+---
+
+= 6.48.0			Exactl version 6.48.0
+>= 6.48				Version 6.48 or newer version
+<=6.48				Version 6.48 or older version
+~> 6.0				Any 6.x version (6.1, 6.2, 6.3) but not 7.x
+~> 6.48.0			Any 6.48.x version (6.48.0, 6.48.1, 6.48.2) but not 6.49 / 7
+
+pesimistic constraint : ~
+
+terraform init -upgrade			--> TO upgrade from one version to another version
+
+** Golden Rule : We always specify required_providers at enterprise level, We never depends on "latest".
+Mostly we use ~> 
+we commit .terraform.lock.hcl file to github to maintain same version lock for the whole team members.
+
+---
 
 
 

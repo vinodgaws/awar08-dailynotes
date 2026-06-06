@@ -221,6 +221,76 @@ resource "aws_instance" "usaserver" {
 
 ==========================
 
+remote-exec code :
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami                    = "ami-0685bcc683dadb6b9"
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = ["sg-07d86ad636f3c4d7f"]
+  key_name               = "awar08-kp"
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file("/Users/avizway/Desktop/keypairs/awar08-kp.pem")
+    host        = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y",
+      "sudo yum install httpd -y",
+      "sudo systemctl start httpd",
+      "sudo systemctl enable httpd",
+      "echo '<h1> Hello from TF </h1>' | sudo tee /var/www/html/index.html"
+    ]
+  }
+  tags = {
+    "Name" = "web-server"
+    "os"   = "Linux"
+  }
+}
+
+===============
+user-data to execute the commands inside instance
+-------
+
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "webserver" {
+  ami                    = "ami-0685bcc683dadb6b9"
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = ["sg-07d86ad636f3c4d7f"]
+  key_name               = "awar08-kp"
+
+  user_data = file("${path.module}/userdata.txt")
+  tags = {
+    "Name" = "web-server"
+    "os"   = "Linux"
+  }
+}
+
+==================
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
