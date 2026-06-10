@@ -1,0 +1,5 @@
+region = "ap-south-1"
+ami = "ami-0db56f446d44f2f09"
+instance_type = "t3.small"
+name = "uat-module-demo"
+bucket_name = "uat-my-tfmoduledemo-1006"

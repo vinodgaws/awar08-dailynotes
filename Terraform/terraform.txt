@@ -409,6 +409,66 @@ terraform workspace select prd
 terraform plan -var-file="prd.tfvars"
 terraform apply -var-file="prd.tfvars"
 
+========================
+
+Project/					
+.
+├── main.tf							--> Root module to call all child modules
+├── modules
+│   ├── ec2						--> ec2 child module
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── s3							--> S3 Child module
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+└── variables.tf					--> root level input variables
+
+
+---
+Key Rules for Modules:
+
+Provider block must be in the root module only
+Each module (root/child) needs "variables.tf"
+run "terrform init" after adding or changing the module.
+source argument points to the child module from root module.
+
+
+=================
+
+Public/Registry Modules : we can get ppre-written modules from terraform registry. 
+prebuild and production ready modules.. 
+
+Navigate to : https://registry.terraform.io/
+
+----
+
+we can call module from github as well
+
+module "my_s3_bucket" {
+  source = "git::https://github.com"
+  
+  bucket_name = "my-unique-app-bucket"
+}
+
+==================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
