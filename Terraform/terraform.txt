@@ -454,9 +454,23 @@ module "my_s3_bucket" {
 
 ==================
 
+D: 11/06/2026
 
 
+DYnamic Block : 
 
+Data block : 
+
+
+==================
+
+Task : Write a end to enmd terraform code to create an s3 bucket (dont make it public), and Create a Cloudfront distribution,add s3 bucket as origin for cloudfront.
+
+Task 2 : Create a VPC (use terraform registry with your own CIDR ranges), Create a security group in the same vpc, Launch an ec2 instance in the VPC's one of the subnet you created. 
+
+Task 3 : create an RDS with mysql, Enable Snapshots for 2 days retention period, also, enable termination protection on RDS.
+
+Task 4 : Create an IAM user and attach an existing policy (i.e; s3fullaccess) to this user.
 
 
 

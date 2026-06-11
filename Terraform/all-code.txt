@@ -279,6 +279,214 @@ resource "aws_instance" "webserver" {
 
 ==================
 
+Without Dynamic Block:
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.49"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_security-group" "manual_create" {
+  name = "testing_manual-sg"
+  vpc_id = "vpc-00532bb704a5dbef0"
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+    ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+    ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+    ingress {
+    from_port = 8080
+    to_port = 8080
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+resource "aws_instance" "webserver" {
+  ami           = var.ami_id
+  instance_type = t3.micro
+  key_name      = awar08-kp
+
+  tags = {
+    Name = Without-Dynamic
+    Env   = Dev
+  }
+}
+
+===============
+
+with dynamic block:
+
+locals {
+  ingress_rules = [
+    { port = 443 },
+    { port = 80 },
+    { port = 22 },
+    { port = 8080 }
+  ]
+}
+
+resource "aws_security-group" "manual_create" {
+  name = "testing_manual-sg"
+  vpc_id = "vpc-00532bb704a5dbef0"
+
+  dynamic "ingress" {
+    for_each = local.ingress_rules
+    content {
+      from_port = ingress.value.port
+      to_port = ingress.value.port
+      protocol = "tcp"
+      cide_blocks = ["0.0.0.0/0"]
+    }
+  }
+}
+
+=================
+
+Filter amazon linux 2023 using "data block"
+
+provider "aws" {
+    region = "ap-south-1"
+}
+
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners = ["amazon"]
+
+  filter {
+    name = "name"
+    values = [ "al2023-ami-2023.*-kernel-6.1-x86_64" ]
+  }
+}
+
+
+resource "aws_instance" "webserver" {
+  ami = data.aws_ami.al2023.id
+  instance_type = "t3.micro"
+  tags = {
+    Name = "Datablock-demo"
+  }
+
+}
+
+============================
+
+Fetch existing VPC and launch instance: 
+
+-------------
+
+provider "aws" {
+    region = "ap-south-1"
+}
+
+data "aws_vpc" "existing" {
+filter {
+  name = "tag:Name"
+  values = [ "terraform-vpc" ]
+}
+}
+
+data "aws_subnet" "web_1a" {
+filter {
+  name = "tag:Name"
+  values = [ "terraform-subnet-public1-ap-south-1a" ]
+}
+}
+
+
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners = ["amazon"]
+
+  filter {
+    name = "name"
+    values = [ "al2023-ami-2023.*-kernel-6.1-x86_64" ]
+  }
+}
+
+resource "aws_instance" "webserver" {
+  ami = data.aws_ami.al2023.id
+  subnet_id = data.aws_subnet.web_1a.id
+  instance_type = "t3.micro"
+  tags = {
+    Name = "Datablock-demo"
+  }
+
+}
+
+==================
+terraform built-in functions : 
+
+
+terraform console			--> to test the functions
+
+
+length(["dev", "uat", "prd"])		--> 3
+upper("avinash") 					--> "AVINASH"
+lower("AVINASH") 					--> "avinash"
+
+format("myapp-%s-bucket-%s", "dev", "2026")
+replace ("hello_world", "_", "-")		--> hello-world
+ 
+split() 
+
+split(",", "dev,uat,prd")
+
+join()
+
+join("-", ["web","app","db"])
+
+trimspace("   dev   ")
+
+merge()
+
+concat()		--> combine multiple lists into one.
+
+-----------
+
+jsonencode()
+
+
+file()
+
+user_data = file("${path.module}/userdata.sh")
+
+---
+
+max(5, 12, 10, 9)
+min(5, 12, 10, 9)
+
+
+---------------
+
+
+
+
+
+
 
 
 
