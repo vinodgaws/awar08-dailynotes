@@ -474,12 +474,35 @@ Task 4 : Create an IAM user and attach an existing policy (i.e; s3fullaccess) to
 
 
 
+==============
+
+D: 12/06/2026
+
+
+https://app.terraform.io/login
 
 
 
 
+terraform {
+  cloud {
+    organization = "aviz7-organization"
+
+    workspaces {
+      name = "awar08-tfhcp"
+    }
+  }
+}
 
 
+terraform login
+terraform init
+
+terraform state pull
+
+terraform state pull > terraform.tftstate
+
+terraform destroy
 
 
 
