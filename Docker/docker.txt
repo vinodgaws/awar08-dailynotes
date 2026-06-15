@@ -1,0 +1,76 @@
+
+
+
+User module					--> 2 servers
+product module				--> Servers (More resources) - 10 server
+order module
+payment module				--> ???		(less resources) - 1 server
+notifications module
+cart module					--> ???	- 1 server
+
+Monolith : 					--> 10 servers
+Single application, We perform single deployment for a small change also
+We need to "scale entire application" if we are having high resource utilisation
+All services will be tightly coupled
+One codebase for entire application.
+Mostly entire program developes in same programing language (java).
+One pipeline is enough to deploy the application.
+
+Microservices: 
+Multiple small services for every module
+Services can Scale independently
+Independent deployments per service
+loosely coupled
+We have flexibility to use multiple codebases with seperate programing languages. 
+(Notifications --> python, order --> .net, user --> java)
+More complex to manage
+For every service, we create and use a pipeline. 
+
+================
+
+Docker is a platform that helps us to build, package and run the application in containers.
+
+sudo dnf install docker -y
+sudo systemctl start docker
+sudo systemctl enable docker
+docker --version
+docker ps				--> Will throw an error
+sudo docker ps
+
+sudo usermod -aG docker ec2-user
+
+newgrp docker
+
+docker ps				--> This should work
+
+docker run hello-world
+
+docker ps
+docker images
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
