@@ -28,6 +28,8 @@ For every service, we create and use a pipeline.
 
 ================
 
+Docker = podman = containerd = cri-o = lxc 
+
 Docker is a platform that helps us to build, package and run the application in containers.
 
 sudo dnf install docker -y
@@ -49,24 +51,95 @@ docker ps
 docker images
 
 
+docker images				--> Lists the local images
+docker pull <image>			--> Pulls the docker image from dockerhub to local
+
+docker search <image>
+docker search <httpd> --filter is-official=true
+
+docker rmi <image>			--> Removes the docker image from local
+
+docker ps					--> Shows the running containers
+
+docker ps -a				--> List all the containers (including stopped)
+
+docker search httpd --filter is-official=true
+
+docker run <image>			--> RUns the docker image in current terminal (interactive mode)
+
+docker run -d <image>		--> Runs the container in background / detached mode
+
+docker run -d --name my-web <image>		--> Run container in detached mode and a defined name
+
+docker run -it ubuntu /bin/bash			--> Interactively connect to contianer and work on it
+
+docker run -it ubuntu sleep 60
+
+docker run mysql						--> THis will fail as required variable in not passed to container
 
 
+#Pass env variables while running the container
+docker run -d --name mysql-test -e MYSQL_ROOT_PASSWORD=s3cret123 mysql
+
+---
+#we can use env file to pass env varibales
+docker run -d --name mysql-env --env-file ./myenv.txt mysql
+
+myenv.txt
+MYSQL_ROOT_PASSWORD=s3cret123
+---
+
+docker stop <id / name>
+
+docker stop mysql-test
+
+docker kill mysql-test
+
+docker start mysql-test
+
+force stop : docker kill
+kill sends SIGKILL 
+
+graceful stop: docker stop
+sends the SIGTERM (graceful)
+
+---
+
+docker rm my-web
+docker rm <container-1> <container-2> <container-3>
+
+docker container prune				--> Remove all Stopped containers
+
+----
+
+Port Mapping: This feature maps the host machiene port to container.
+
+docker run -d -p <host-port>:<container-port> nginx
+
+docker run -d --name mynginx -p 80:80 nginx
+
+docker run -d --name mynginx -p 80:80 -p 443:443 nginx
+
+docker run -d --name mynginx -p 8888:80 -p 443:443 nginx
+
+---
+
+docker run -d --name myhttpd -p 8080:80 httpd
 
 
+===========
 
+How to connect to a running container
 
+myhttpd
+mynginx
 
+/bin/bash
+/bin/sh
 
+docker exec -it mynginx /bin/bash
 
-
-
-
-
-
-
-
-
-
+docker exec -it myhttpd /bin/bash
 
 
 
