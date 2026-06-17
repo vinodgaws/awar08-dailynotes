@@ -103,6 +103,10 @@ kill sends SIGKILL
 graceful stop: docker stop
 sends the SIGTERM (graceful)
 
+docker pause <container-id>
+docker unpause <container-id>
+
+
 ---
 
 docker rm my-web
@@ -140,6 +144,130 @@ mynginx
 docker exec -it mynginx /bin/bash
 
 docker exec -it myhttpd /bin/bash
+
+
+=============================
+
+D: 17/06/2026
+
+docker inspect <container-id>
+
+docker stats
+
+--memory=256m
+--memory=512m
+--cpus=1
+--cpus=0.5
+
+We are restricting a container to specific resource limits.
+
+docker run -d -p 8080:80 --name mynginx-withlimit --memory=256m --cpus=1 nginx
+
+docker update --memory=512m --cpus=2 mynginx-withlimit
+
+search required info from a JSON..
+
+docker inspect --format='{{.HostConfig.Memory}}' mynginx-withlimit
+docker inspect --format='{{.HostConfig.NanoCpus}}' mynginx-withlimit
+
+-------------
+
+Restart Policies: Control what happenes when a cotnainer stops or the host reboots.
+
+docker run -d --restart=always --name mynginx -p 80:80
+
+"always" or "unless-stopped" --> Mostly uses in Production environment.
+
+always 			: Always restart, including on host reboot
+unless-stopped 	: Similar to always, But not if manually stopped.
+no				: Never restart (default)
+on-failure		: Restart on failure if contianer exist tith error. 
+on-failure:4	: Restart on failure, Max attempts to 4.
+
+docker run -d -p 8080:80 --restart=always --name mynginx-withlimit --memory=256m --cpus=1 nginx
+
+--------------
+
+Troubleshhoting & debugging with logs: 
+
+docker logs 55a9a74d741a			--> displays/shows the container logs
+
+docker logs -f 55a9a74d741a			--> Displays the logs in real time
+
+docker logs --tail 20 mynginx		--> last 20 logs
+
+docker logs -t mynginx
+
+docker events					--> Streams real-time events i.e; container starts, stops, kills, network connects...
+
+docker stats 					--> Live resources usage
+docker stats <container-id>		--> Live resources usage os a specific container
+
+docker top <container-id>		--> Shows the processes inside a container
+
+docker rename old_name new_name	--> Rename a cotnianer
+
+------------------
+
+Copy files to/from container
+
+docker cp 55a9a74d741a:/var/log/nginx/access.log ./
+
+docker cp ./myenv.txt 55a9a74d741a:/tmp/myenv.txt
+
+docker diff <container-id>		--> Shows file system changes
+
+docker system df				--> check disk usage of docker
+
+---
+
+docker save -o mynginx.tar <image-name>		--> This creates a tar file of given image
+docker load -i mynginx.tar					--> Import image as tar file
+
+---
+
+docker container prune					--> Clears all stopped containers
+
+docker image prune						--> Clears Dangling (untagged) images
+
+docker image prune -a					--> Clears all unused images
+
+docker network prune					--> clears ununsed network
+docker volume prune						--> clears ununsed volumes
+
+Use carefully: lab env : Remove all containers (running & stopped )
+docker rm -f $(docker ps -aq)		--> Remove all stopped and running containes
+
+docker rmi -f $(docker images -q)	--> Rmeove all images
+
+docker system prune -a					--> Remove images, containers and network
+docker system prune -- volumes			--> Same as system prune, picks unused volumes
+
+==========================
+
+Docker Networking: 
+
+docker network ls				--> List all networks
+
+bridge 	: Default network.. All Containers get their own virtual network.. 
+host   	: Container shared host machiene's network directly
+none	: no network at all
+container: Shares network with another cotnainer
+overlay : Connects containers across multiple hosts
+
+docker network inspect bridge
+
+**Default bridge network does not support DNS resolutions between containers. 
+
+docker network create my_network
+
+docker run -dit --name c1 --network my_network alpine
+docker run -dit --name c2 --network my_network alpine
+
+
+
+
+
 
 
 
