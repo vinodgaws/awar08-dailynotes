@@ -1,0 +1,128 @@
+
+
+
+Kubernetes : K8s : 
+Observability : o11y : 
+
+Google built an internal system : Borg (later renamed to Omega) to tun their massive globa infra. 
+
+In 2014, Google made it open-source and named it as Kubernetes. 
+
+KCNA : Kubernetes and Cloud Native Associate
+
+K8s is a CNCF (Cloud Native COmputing Foundation) project.. 
+
+K8s architecture:  K8s primarily have 2 main parts.
+
+1. Control Plane : Brain of K8s
+
+kube-apiserver / API Server : 
+--> THis is the front door of K8s. THis is the only point of contact to the cluster. 
+--> We can communicate with api server using "kubectl" command
+--> If you want to deploy a new app, you talk to the API server. 
+--> It validates the configuration (pod, deployment, service).
+
+etcd : 
+--> etcd contains all the information (key and value format) about k8s cluster.
+--> You can treat is as K8s Database.
+--> It stores exact configuration and state of every single thing. (desired and current state)
+--> if etcd is lost, the cluster state is lost.
+
+Kube-Scheduler : 
+--> When you deploy an application container, This Kube scheduler look for available worker nodes and decides which node has enough resources (CPU, RAM) to host it.
+--> This DOES NOT run the pod, It will just picks the best node for our workload.
+
+Kube-Contoller-Manager : 
+--> It act as supervisor - Monitors the etcd and ensure app actual state mateches the desired state.
+--> If we ask for 3 replicas, and only 2 are running.. this send instructions to scheduler to pick a node and then create the replica.
+--> This runs background loops to make sure desired state and actual state mateches.
+
+CCM - Cloud Controller Manager : 
+--> Connects the K8s to the cloud resources i.e; Load Balancer, IAM Roles, VPC
+--> Without CCM, We cant use ELB, EBS volumes, EFS, Cloudwatch.. 
+
+
+
+2. Worker Nodes / Data Plane : Hands of K8s 
+
+Kubelet :  
+--> kubelet is an agent that runs on every worked node. 
+--> it listens to the control plane (specially from API server) and ensure that the containers described in the pod spec are running and healthy.?
+--> If container goes down, the kubelet restarts it locally, Automatically.
+
+
+kube-proxy : 
+--> This is a networking component that runs on every node.
+--> This manages the networking and communiation to out workload.
+--> THis assigns IPs to every pod we create.
+--> A network proxy that runs on each node. This handles network communication inside and outside of your cluster, It make sure traffic reaches the right container.
+
+
+Container Runtime : 
+--> Responsible for pulling images and running containers.
+--> K8s primarily supports cri-o, containerd (used to support docker)
+--> Kubelet ask container runtime to pull the image and start the container inside the pod.
+
+
+Pod : The smallest deployable unit in K8s. A Pod is a wrapper around our application contianer. 
+Generally one pod can contains one container.
+Sometime, One pod may contains 2/more containers.. 1 will be primary contianer and other will be sidecar cotnainer.
+
+=============
+
+EKS : Elastic Kubernetes Service : THis is a fully managed K8s service provided by AWS> 
+Mainly AWS takes care about the control plane components. 
+For HA and FT, AWS maintains multiple copies in 3 AZs.. 
+--> We dont get any access to Control plane nodes.
+
+--> We can easily integrate with AWS services.. i.e; cloudwatch, VPC, IAM IRSA, Route53, Cloudwatch, EBS volumes, EFS.. 
+
+Amazon EC2 Self Managed Node Group (Full Control, More management part)
+--> We need to manually provision, configure and manage ec2 instances for worker nodes. 
+--> We need to handle the scaling, os updates and security patches.
+--> it requires custom AMI (bottlerocket, Amazon linux ami)
+
+Amazon EC2 Managed Node Group : 
+--> AWS automatically provision, configure and manage ec2 instances for worker nodes.
+--> We need to handle the scaling, os updates and security patches.
+--> aws uses bottlerocket ami.
+--> We just need to select the right sized ec2 instances.
+
+EKS Auto Mode : AWS automatically picks the required compute resources..
+
+AWS Fargate : Serverless, No nodes to manage.. We cna directly deploy our app without nodes.. Pay-per-node..
+
+==============
+
+Pre-Requisites : 
+
+1. AWS CLI tools must be installed and configured : https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+
+2. Install kubectl in your laptop : 
+https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
+
+3. Install eksctl : https://docs.aws.amazon.com/eks/latest/eksctl/installation.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
