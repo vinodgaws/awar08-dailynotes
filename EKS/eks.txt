@@ -105,16 +105,82 @@ https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
 3. Install eksctl : https://docs.aws.amazon.com/eks/latest/eksctl/installation.html
 
 
+================
+
+D: 26/06/2026
 
 
+Standard support : 0.10$/Hour
+Extended support : 0.50$/Hour
+
+eksctl create cluster --name=ekswithavinash --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myfirstnodegrp --node-type c7i-flex.large --nodes 2 --node-ami-family=AmazonLinux2023 --managed
 
 
+Enable OIDC Provider: OpenID COnnect allows IAM service/User to authenticate with the Kubernetes service accounts.
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
+
+--
+
+eksctl automatically updates the kubectl with current cluster context. If you want explicitly update the kubectl config with eks settings.. run below command 
+--> kubeconfig location : ~/.kube/config
+
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash
+
+--
+
+k8s manifest  supports YAML (.yaml / .yml)
+
+kubectl get pods
+kubectl get nodes
 
 
+apiVersion: v1 (Core Group) 
+Supported components: pods, services, namespaces, configmaps and secrets.
+Most k8s fundamental objects do not require a group name in theit version string.
+
+apiVersion: apps/v1 (Named Group) 
+Supported components: Deployment, Daemonsets, statefulsets, Replicasets.
+This is the stable version for managing application level workloads on K8s.
+
+Pod : smallest deployable unit in K8s. a pod can contains one or more containers. Mostly one container.
+
+Sometimes a Container may required a support container i.e; traffic filter, log export.. The other container in a pod, called as "SideCar Container".
+
+metadata: data about the resource (pod).. name.? label.? 
+
+labels : Label used for organising, slecting and grouping the resources. This is commonly used by services to find and connect the pod. 
+
+spec: specification - We need to define the desired state and behaviour of the pod. 
 
 
+kubectl get pods
+
+kubectl apply -f pod.yaml --dry-run=client
+
+kubectl describe pod myfirstpod
+
+kubectl logs myfirstpod					--> Shows the logs of pod
+
+kubectl logs -f myfirstpod				--> Shows the logs of pod
+
+-----
+
+Selector : Defines how the replicaset identifies which pod is responsible for.
+"matchLabel" looks for pods that have the label "app: nginx"
+This is crucial - The replicaset only manages the pods that matches the selector.
+
+template is the pod template - Its a blueprint for creating the new pods.
+
+-----
+
+replicaset : Always maintains identical copies of ur pods with defines replica count. 
 
 
+------
+
+
+eksctl delete cluster --name ekswithavinash --region ap-south-1
 
 
 
