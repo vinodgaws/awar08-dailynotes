@@ -162,7 +162,13 @@ kubectl describe pod myfirstpod
 
 kubectl logs myfirstpod					--> Shows the logs of pod
 
-kubectl logs -f myfirstpod				--> Shows the logs of pod
+kubectl logs -f myfirstpod				--> Shows the live logs of pod
+
+kubectl logs <pod-name> --previous		--> Verify the logs of a crashed container
+kubectl logs <pod-name> -p
+
+kubectl get events
+
 
 -----
 
@@ -176,11 +182,84 @@ template is the pod template - Its a blueprint for creating the new pods.
 
 replicaset : Always maintains identical copies of ur pods with defines replica count. 
 
+Limitations with Replicaset : RS does not support the rolling updates to update the container versions / application updates. 
+
+Ex: if you want to change your application/nginx version, you need to delete the old replicaset and need to create with updated version.
 
 ------
 
 
 eksctl delete cluster --name ekswithavinash --region ap-south-1
+
+===================
+
+D: 27/06/2026
+
+RS --> 2 pods (1 pod deleted --> 1 pod creates)
+
+1.30 --> Version 
+
+
+Deployment: Its K8s higher level of abstraction that manages ReplicaSets and Pods. This supports rolling updates, rollbacks and scaling without downtime. 
+
+Ex: 
+if you deploy version 1 (1.30.3 - nginx) of your application
+you decided to update this version to 1.31.2.. 
+Deployment ensures this upgradation takes place without anydowntime.
+If required, it can rollback to previous version.
+
+---
+
+kubectl exec -it mynginx-5cd6b999d8-vzmlr -- /bin/bash
+
+
+-------
+
+Imperative : We can execute direct commands one after another in terminal. 
+--> Fast, ad-hoc commands..
+--> hard to track, Who changes, which file used to apply this changes.
+
+kubectl create deployment nginx --image=nginx
+kubectl scale deployment nginx --replicas=3
+
+Declarative : Istead of command, you do changes in the file, use file and apply the changes.. 
+--> File based edits
+--> Production level workload
+--> Version controlled if you store in git. Easy to track file changes. 
+
+
+kubectl rollout status deployment/mynginx
+kubectl rollout history deployment/mynginx
+
+kubectl exec -it  mynginx-5cd6b999d8-24bpl -- /bin/bash
+
+---
+
+CPU : 
+
+m : millicores
+
+1 CPU 		= 1000 millicores
+0.5 CPU		= 500 millicores	= 500m
+0.2 CPU		= 200 millicores	= 200m
+
+memory: Mi : mebibytes
+
+1 Mi	= 1024 KiB
+1 Gi	= 1024 Mi
+
+requests : Minimum resources K8s gurantees to the pod.
+limits : Maximum resources the pod is allowed to use.
+
+kubectl get events
+
+kubectl top pods
+
+kubectl top pods -A
+
+kubectl top pod mynginx-5d8ddbd56-6n2nn --containers
+
+kubectl top nodes
 
 
 
