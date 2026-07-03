@@ -261,6 +261,74 @@ kubectl top pod mynginx-5d8ddbd56-6n2nn --containers
 
 kubectl top nodes
 
+====================
+
+D: 03/07/2026
+
+Service ==> always use selector option (key and value should match. --> app = nginx)
+
+1. ClusterIP (Default)
+--> Works internal only
+--> An internal office intercom systems. 
+--> It creates stable IP address that is only "accesable inside the cluster".
+
+Testing the output in your laptop:
+
+kubectl port-forward svc/cip-demo 80:80
+
+----
+
+2. Nodeport Service : Nodeport picks a static port to expose our applicaiton.
+
+NodePort has specific range of ports : 30000 - 32767
+We can choose / system picks a port automatically.
+Output is accesable via any nodeip.
+** We need to open the port at SG level
+
+---
+
+3. LoadBalancer : 
+
+This links to aws Load Balancer (Classic Load Balancer)
+For production level worklaods, we use this option. 
+CCM - Cloud Controller Manager helps to create/manage resources.
+
+---
+
+4. ExternalName : 
+
+Instead of routing traffic to pods inside the K8s, it maps a shortcut name inside our cluster to an External web address using DNS name.
+
+---
+
+Namespace : Logical isolation
+
+Problem : Same labels used by multiple teams can cause work overwrites. 
+Problem : One team is using more resources than they really desired/allocated.
+
+1. Default: THis picks automatically, if out worklaod is not specified to run in any dedicated/spaecific namespace. 
+
+2. kube-system : k8s internal critical infrastructure management workloads resides here. 
+Do not modify/delete / deploy here.
+
+3. kube-public : This namespace is readable by anyone, even unauthenticated users. 
+
+4. kube-node-lease : Like a heqalth heartbeat tracker. Manages node heartbeat to track node availability. 
+
+
+
+kubectl get all -A 		--> List everything from all namespaces
+
+kubectl get pods -n kube-system
+kubectl get all -n kube-system
+
+kubectl create ns myapp
+
+
+
+
+
+
 
 
 
