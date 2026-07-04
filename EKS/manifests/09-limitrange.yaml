@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: myapp-limits
+  namespace: myapp
+spec:
+  limits:
+  - type: Container   #This directly apply to individual containers
+    # max:
+    #   cpu: "2"
+    #   memory: "1Gi"
+    # min:
+    #   cpu: "0.1"
+    #   memory: "32Mi"
+    default:          #THis will be picked, if your container LIMITS are mising.   
+      cpu: "1"        #Max CPU container can get in myapp ns
+      memory: "1Gi"   #max memory
+    defaultRequest:     #This will be picked, if your container "REQUESTS" are missing
+      cpu: "0.5"        #Default requested CPU, if we dont define any resource in Manifest
+      memory: "512Mi"   #Default requested Memory, if we dont define any resource in Manifest

@@ -1,0 +1,193 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Batch 8 Workshop AI Chatbot - Lambda + API Gateway + Bedrock Nova 2 Lite
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: BedrockInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: bedrock:InvokeModel
+                Resource:
+                  - !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/global.amazon.nova-2-lite-v1:0"
+                  - "arn:aws:bedrock:*::foundation-model/amazon.nova-2-lite-v1:0"
+
+  ChatFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: bedrock-ai-assistant
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Timeout: 30
+      MemorySize: 256
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import logging
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          bedrock = boto3.client('bedrock-runtime', region_name='ap-south-1')
+
+          def lambda_handler(event, context):
+              try:
+                  if event.get('httpMethod') == 'OPTIONS':
+                      return {
+                          'statusCode': 200,
+                          'headers': {
+                              'Content-Type': 'application/json',
+                              'Access-Control-Allow-Origin': '*',
+                              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                              'Access-Control-Allow-Headers': 'Content-Type'
+                          },
+                          'body': ''
+                      }
+
+                  body = json.loads(event['body']) if event.get('body') else {}
+                  user_message = body.get('message', '')
+
+                  if not user_message:
+                      return {
+                          'statusCode': 400,
+                          'headers': {
+                              'Content-Type': 'application/json',
+                              'Access-Control-Allow-Origin': '*',
+                              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                              'Access-Control-Allow-Headers': 'Content-Type'
+                          },
+                          'body': json.dumps({'error': 'Message is required'})
+                      }
+
+                  request_body = {
+                      "system": [
+                          {
+                              "text": "You are a helpful AI assistant built on AWS by Aviz Academy for students. Answer clearly and simply."
+                          }
+                      ],
+                      "messages": [
+                          {
+                              "role": "user",
+                              "content": [{"text": user_message}]
+                          }
+                      ],
+                      "inferenceConfig": {
+                          "maxTokens": 1000,
+                          "temperature": 0.7
+                      }
+                  }
+
+                  response = bedrock.invoke_model(
+                      modelId='global.amazon.nova-2-lite-v1:0',
+                      body=json.dumps(request_body)
+                  )
+
+                  response_body = json.loads(response['body'].read())
+                  ai_response = response_body['output']['message']['content'][0]['text']
+
+                  return {
+                      'statusCode': 200,
+                      'headers': {
+                          'Content-Type': 'application/json',
+                          'Access-Control-Allow-Origin': '*',
+                          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                          'Access-Control-Allow-Headers': 'Content-Type'
+                      },
+                      'body': json.dumps({'response': ai_response})
+                  }
+
+              except Exception as e:
+                  logger.error(f"Error: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'headers': {
+                          'Content-Type': 'application/json',
+                          'Access-Control-Allow-Origin': '*',
+                          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                          'Access-Control-Allow-Headers': 'Content-Type'
+                      },
+                      'body': json.dumps({'error': 'Internal server error'})
+                  }
+
+  ChatApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: bedrock-chat-api
+      Description: API for Bedrock AI Assistant
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ChatResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ChatApi
+      ParentId: !GetAtt ChatApi.RootResourceId
+      PathPart: chat
+
+  ChatPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ChatApi
+      ResourceId: !Ref ChatResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ChatFunction.Arn}/invocations"
+
+  ChatOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ChatApi
+      ResourceId: !Ref ChatResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ChatFunction.Arn}/invocations"
+
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ChatFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ChatApi}/*/*/*"
+
+  ChatApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ChatPostMethod
+      - ChatOptionsMethod
+    Properties:
+      RestApiId: !Ref ChatApi
+
+  ChatApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ChatApi
+      DeploymentId: !Ref ChatApiDeployment
+      StageName: dev
+
+Outputs:
+  ApiEndpoint:
+    Description: Invoke URL for the chat endpoint
+    Value: !Sub "https://${ChatApi}.execute-api.${AWS::Region}.amazonaws.com/dev/chat"

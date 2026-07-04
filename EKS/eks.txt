@@ -324,10 +324,35 @@ kubectl get all -n kube-system
 
 kubectl create ns myapp
 
+---
+
+D: 04/07/2026
+
+kubectl config set-context --current --namespace=myapp
+
+kubectl get pods -o wide					--> Shows node info also
+
+
+Daemonsets : This ensures exactly one copy of a specific pod runs on every single worker node in our k8s cluster. 
+--> If we add new node to cluster, daemonset creates automatically.
+--> Mostly used for "monitoring tools", "log exporters", "network filter components" for monitoring the workload/nodes.
+
+
+Deployment : We can define our pod count, And Deployment randomly place pods on Nodes, Suitable for webapp, APIs.. 
+
+DaemonSet : Pod count Matches the exactly with node count. node count = pod count, monitoring, network agent, log exporters.. 
+
+
+kubectl get ds
 
 
 
+eksctl create cluster --name=ekswithavinash --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myfirstnodegrp --node-type c7i-flex.large --nodes 2 --node-ami-family=AmazonLinux2023 --managed
 
+
+THis command will adjust the max nodes and set the desired node count.
+
+eksctl scale nodegroup --cluster ekswithavinash --name myfirstnodegrp --nodes-max 4 --nodes 2
 
 
 
