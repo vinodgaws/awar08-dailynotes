@@ -355,6 +355,91 @@ THis command will adjust the max nodes and set the desired node count.
 eksctl scale nodegroup --cluster ekswithavinash --name myfirstnodegrp --nodes-max 4 --nodes 2
 
 
+======================
+
+D: 06/07/2026
+
+CNI :Container Network Interface
+
+CSI : Comtainer Storage Interface
+
+PV 		: Persistent Volume : A storage resources in the cluster i.e; Harddisk
+PVC 	: Persistent Volume Claim : A request for storage
+
+pod --> Need some storage --> PVC (Request) --> PV (Actual Storage) --> AWS EBS / EFS 
+
+By Default, Pods contains ephemeral storage. Data cannot sustain pod restart.
+
+
+PVC :
+--> A request for storage made by pod.
+--> Pod cannot use PV directly, It has to gi through PVC. 
+--> We have to specify Size, Access Mode, Storage Class.. 
+
+PV : 
+--> A storage resources in the cluster i.e; Harddisk
+--> EVen If pod deleted, storage still available.
+
+Access Mode: 
+
+RWO : ReadWriteOnce : EBS (gp2, gp3, io1, io2) : One Node can read/write
+RWX : ReadWriteMany : EFS, NFS : Multiple Nodes can read/write
+ROX : ReadOnlymany  : Multipl Nodes can read only.. 
+
+There are 2 types of Provisioning methods :
+
+1. Static : Admin/we Creates PVs Manually. PVC binds to an existing PV. 
+2. Dynamic : PVC + Storage Class --> K8s creates automatically via CSI Driver.
+
+
+IRSA : IAM Role for Service Account : 
+
+
+Step 1 : Associate OIDC Provider
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
+
+Step 2 : Create an IAM Service account
+
+eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster ekswithavinash --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --approve --override-existing-serviceaccounts
+
+Step 3 : Install EBS CSI Driver
+
+eksctl create addon --name aws-ebs-csi-driver --cluster ekswithavinash --force
+
+---
+
+Stateful : Remembers the past : 
+--> It saves data abou the identity and past actions. IT keeps history of interactions. 
+
+Stateless : Forgots Immesiately : 
+--> It does not save any data about the past actions. Every single request is completely brand new and isolated.
+
+
+
+StatefulSet : A stateful set manages the stateful application.. 
+--> Persistent storage
+--> Stable network identity / names
+--> Ordered creation and termination
+
+myapp-0
+myapp-1
+myapp-2
+
+Usecase : 
+Database : Mysql, Postgresql
+Queue : Kafka, RabbitMQ
+
+Statefulset has a Pre-requisite, We need "Headless service"
+
+Headless service : When we set CLusterIP to "None", its nothing but a headless service. Headless service gives each pod its own dns name, instead of single service IP. 
+
+myapp-0.myapp-headless.default.svc.cluster.local
+myapp-1.myapp-headless.default.svc.cluster.local
+
+
+reclaimPolicy: Retain : PV kept even after PVC Deletion.
+reclaimPolicy: Delete : PV Deleted when PVC Deleted.
 
 
 
