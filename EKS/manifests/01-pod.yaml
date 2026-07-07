@@ -4,7 +4,6 @@ metadata:
   name: myfirstpod
   labels:
     name: myfirstpod
-
 spec:
   containers:
   - name: mynginx

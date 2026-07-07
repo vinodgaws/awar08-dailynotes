@@ -441,6 +441,104 @@ myapp-1.myapp-headless.default.svc.cluster.local
 reclaimPolicy: Retain : PV kept even after PVC Deletion.
 reclaimPolicy: Delete : PV Deleted when PVC Deleted.
 
+======================
+
+D: 07/07/2026
+
+Helm is a package manager for K8s, how exactly we have yum/dnf for linux os.
+
+Instead of writing and managing multiple manifest files manually, we can use this helm chart. 
+
+chart : A package of resources template.
+Repository : You can find helm repos hosted public at https://artifacthub.io/
+release : a version of our application
+values	: store configurable info into this file, so you can just modify this file, oif you want to update/change anything. 
+
+Install helm in your local laptop:  https://helm.sh/docs/intro/install
+
+Verify: 
+--> helm version
+
+Make sure to login to docker "docker login"
+
+helm repo list				--> List the added repos
+
+helm repo update			--> Updates the installed repos 
+
+helm search repo 			--> search for the repo
+helm search hub repo 			--> search for the repo from artifacts hub
+
+
+helm ls						--> List the installed releases
+helm ls -A					--> List from all namespaces
+
+helm pull bitnami/nginx --version 25.0.12    
+
+helm pull bitnami/nginx --version 25.0.12 --untar		--> pull and unzip locally
+
+helm install my-nginx bitnami/nginx --version 25.0.12
+
+
+helm install my-nginx bitnami/nginx --version 25.0.12 --dry-run				--> We can perform dry run
+
+
+helm install my-nginx bitnami/nginx --version 25.0.12 --set replicaCount=2	--> update default value when deploying
+
+helm upgrade my-nginx bitnami/nginx --version 25.0.12 --set replicaCount=3	--> update existing chart values
+
+helm upgrade my-nginx bitnami/nginx --version 25.0.12 --set replicaCount=3 --description "updated count to 3"
+
+
+helm upgrade my-nginx bitnami/nginx --version 25.0.12 --set replicaCount=5 --description "updated pod count to 5"
+
+helm history my-nginx
+
+helm rollback my-nginx 3			--> Rollback to revision 3
+
+helm uninstall my-nginx
+
+helm status <release-name>
+
+
+helm template <release-name> <chart-directory>		--> Generates and prints the plain k8s manifest files locally without deploying them to k8s cluster.
+
+helm create <chart-name>			--> generate a plain skeleton/shell
+helm lint <chart-location>			--> bugs / syntx errors /  format errors
+
+---
+
+helm pull <chart-name>
+helm install <release-name> <chart-name>
+helm upgrade <release-name> <chart-name>
+helm history my-nginx
+helm rollback <release-name> <revision-number>
+helm ls
+helm ls -A
+helm status <release-name>
+helm get values <release-name>
+helm create <chart-name>
+helm lint <chart-location>
+helm template <release-name> <chart-directory>
+
+
+================
+
+For non-sensitive info : You use "AWS SSM Parameter group/store".		--> ConfigMap
+For Sensitive info : You use "AWS Secrets Manager". 					--> Secrets
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
