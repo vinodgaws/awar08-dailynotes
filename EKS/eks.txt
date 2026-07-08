@@ -523,19 +523,74 @@ helm template <release-name> <chart-directory>
 
 ================
 
+D: 07/07/2026
+
+
 For non-sensitive info : You use "AWS SSM Parameter group/store".		--> ConfigMap
 For Sensitive info : You use "AWS Secrets Manager". 					--> Secrets
 
+Secrets will just encode the data, it wont encrypt the data. 
+
+echo -n 'Password123!' | base64
+echo 'YWRtaW4=' | base64 --decode
+
+all secrets stores in k8s etcd. 
+
+kubectl get secrets
+kubectl describe secrets db-secret
+kubectl get secret db-secret -o jsonpath={.data.DB_PASSWORD} | base64 --decode
+
+-------
+
+K8s has primarily 3 types of scalings:
 
 
+HPA : Horizontal Pod AutoScaler : Based on CPU or memory, pod count will increase / decrease.
+VPA : Vertical Pod Autoscaler : THis will adjust the pod's CPU/Memory, This may need to restart your pod.   
+Cluster AutoScaler : Adjust the nodes based on the pod count : Scales instances up / down. 
+
+https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/
 
 
+kubectl get hpa
+
+kubectl autoscale deployment php-apache --cpu=60% --min=1 --max=15
+
+kubectl patch hpa php-apache --type='json' -p='[{"op": "replace", "path": "/spec/maxReplicas", "value": 20}]'
+
+--
+
+TO increase the load on the php-apache deployment's pods, run below command
+
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+
+kubectl get hpa hp-apache --watch
+kubectl get hpa hp-apache --w
+
+----
+
+Cluster Auto Scaler: 
+
+We need to add IAM roles to the eks nodes.
+1. ekscomputepolicy
+2. asg full access
+
+Also, Adjust the Min and Max instance count at ASG. 
 
 
+helm repo add autoscaler https://kubernetes.github.io/autoscaler
+
+helm repo update
+
+helm install cluster-autoscaler autoscaler/cluster-autoscaler --namespace kube-system --set autoDiscovery.clusterName=ekswithavinash --set awsRegion=ap-south-1 --set extraArgs.balance-similar-node-groups=true --set extraArgs.skip-nodes-with-system-pods=false
 
 
+balance-similar-node-groups=true : distribute workload across similar node types
+skip-nodes-with-system-pods=false : delete the node even if it is running system pods
 
+** Delete HPA before scaling, to not to get conflict with HPA. 
 
+kubectl scale deployment php-apache --replicas=5
 
 
 
