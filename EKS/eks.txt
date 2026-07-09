@@ -230,6 +230,8 @@ Declarative : Istead of command, you do changes in the file, use file and apply 
 
 kubectl rollout status deployment/mynginx
 kubectl rollout history deployment/mynginx
+kubectl rollout undo deployment/mynginx
+kubectl rollout restart deployment/mynginx
 
 kubectl exec -it  mynginx-5cd6b999d8-24bpl -- /bin/bash
 
@@ -523,7 +525,7 @@ helm template <release-name> <chart-directory>
 
 ================
 
-D: 07/07/2026
+D: 08/07/2026
 
 
 For non-sensitive info : You use "AWS SSM Parameter group/store".		--> ConfigMap
@@ -591,6 +593,59 @@ skip-nodes-with-system-pods=false : delete the node even if it is running system
 ** Delete HPA before scaling, to not to get conflict with HPA. 
 
 kubectl scale deployment php-apache --replicas=5
+
+====================
+
+D: 09/07/2026
+
+git clone https://github.com/kubernetes/autoscaler.git
+
+cd /virticalpodautoscaler/hack/ 
+./vpa-up.sh
+
+
+--> Create a VPA for our deployment. 
+--> VPA and HPA Dont work side by side. 
+
+
+Off : Only shows the suggestions, donesnt apply
+Initial : Applies recommendations only during Pod creation. Running pods are never touched.
+InPlaceOrRecreate : Attempts to resize CPU/memory on the fly without restarting the Pod. Falls back to eviction if node capacity or runtime limits prevent it.
+Recreate : Actively evicts healthy running Pods to force resource updates.
+
+
+kubectl label ns default goldilocks.fairwinds.com/enabled=true
+kubectl label ns goldilocks goldilocks.fairwinds.com/enabled=true
+kubectl label ns myapp goldilocks.fairwinds.com/enabled=true
+
+
+==================
+
+Docker pull avizway/app:v1
+Docker pull avizway/app:v2
+Docker pull avizway/app:v3
+Docker pull avizway/app:canary
+Docker pull avizway/app:green
+Docker pull avizway/app:blue
+
+
+
+90% of the times, 
+
+Strategy			Downtime 		Rolling Speed			Cost			Risk
+Rolling udpate 	 	No				Fast					Normal			Low
+Recreate			YES (some)		moderate				Normal			medium
+Blue/Green			None			Instant					2x				Low
+Canary				None			Fast					small			Low
+
+
+kubectl rollout status deployment/demo-app
+
+kubectl get pods --watch
+
+
+
+
 
 
 
