@@ -629,7 +629,6 @@ Docker pull avizway/app:green
 Docker pull avizway/app:blue
 
 
-
 90% of the times, 
 
 Strategy			Downtime 		Rolling Speed			Cost			Risk
@@ -642,6 +641,114 @@ Canary				None			Fast					small			Low
 kubectl rollout status deployment/demo-app
 
 kubectl get pods --watch
+
+=====================================
+
+D: 10/07/2026
+
+Node Affinity : This controls which nodes your pod should run on, THis selects based on node labels. 
+
+
+kubectl get nodes
+kubectl get nodes --show-labels
+kubectl describe nodes <node-name>
+
+ip-192-168-14-242.ap-south-1.compute.internal   ==> unlabelled
+ip-192-168-33-48.ap-south-1.compute.internal    ==> Labelled
+
+TO add a label:
+kubectl label nodes ip-192-168-33-48.ap-south-1.compute.internal disktype=ssd
+
+To remove a label: 
+kubectl label nodes ip-192-168-33-48.ap-south-1.compute.internal disktype-
+
+Remove label from all nodes:
+kubectl label nodes --all disktype-
+
+1. Hard Rule : Pod must run on a maching node, If match lablelled not found, it stays pending.
+requiredDuringScheduling
+
+2. Soft Rule : pod looks for matching labelled node, but it will run even if no node has label.
+preferredDuringScheduling 
+
+IgnoreDuringExecution: Running pods wont be eveicted if labels change. 
+
+=======================
+
+Pod Affinity & Anti-Affinity: 
+
+pod affinity : Pods stick together on the same node. 
+THis helps whenevr we need ultra low latency between pods.
+
+Pod Anti-Affinity : Pods cannot run on the same node. 
+THis helps for High availability.
+
+=======================
+
+Taint (node) : This is a special seat with "reserved" option. 
+Tolaration (pod) : The "pass" to get the "reserved" seat.
+
+
+NoSchedule : New pods wont be scheduled here.
+PreferNoSchedule : K8s avoids scheduling workload here, But its not strict.
+
+
+Step 1 : Add a label to a node, so we can force our pid to run on that specific node using "nodeselector"
+
+kubectl label nodes ip-192-168-33-48.ap-south-1.compute.internal disktype=ssd
+
+Step 2 : Taint the same node. 
+
+kubectl taint nodes ip-192-168-33-48.ap-south-1.compute.internal role=db:NoSchedule
+
+untaint: 
+kubectl taint nodes ip-192-168-33-48.ap-south-1.compute.internal role=db:NoSchedule-
+
+-----
+
+Node Drain: Drain evicts all pods from node gracefully. 
+Comonly used when we perform
+--> Node maintenance (os patching, hardware upgrade)
+--> decomissioning a node
+
+kubectl drain <node> --ignore-daemonsets --delete-emptydir-data --timeout=120s --force
+
+kubectl drain ip-192-168-33-48.ap-south-1.compute.internal --ignore-daemonsets --delete-emptydir-data --timeout=120s --force
+
+kubectl uncordon ip-192-168-33-48.ap-south-1.compute.internal
+
+kubectl describe nodes ip-192-168-33-48.ap-south-1.compute.internal
+
+to rebalance the deployment across the nodes, once node drain/maintenance activity is completed: 
+kubectl rollout restart deployment mynginx
+
+-----
+
+Liveness probe : Is our container alive.? If not, Container restarts.. 
+
+Readiness probe : Is the container ready to serve the traffic.? If not, Container will be removed from service.
+
+Startup probe : Has the container started, if not, it kills and restarts. 
+
+initialDelayseconds : wait before first check
+period seconds: perform the check for every "x" seconds
+failure thresholds: restarts the container after "x" consecutive failures. 
+
+* Pods wont receive traffic untill the "readiness" probe passed.
+* Start-up probe configuration helps slow start applications.
+** liveness probe and readiness probes wont start untill "startup probe" success.
+
+-------
+
+Time controls we can apply on deployments: 
+
+minReadySeconds : How long a new pod must run without crashing before considered available.
+progressDeadlineSeconds : max time for a deployment to make progress. Id this time exceeds, deployment markes as failure.
+terminationGracePeriodSeconds : Time given to the container for graceful shutdown, before its being killed.
+
+
+
+
 
 
 
