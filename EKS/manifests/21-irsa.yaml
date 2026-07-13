@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mys3
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mys3
+  template:
+    metadata:
+      labels:
+        app: mys3
+    spec:
+      serviceAccountName: s3-access-sa
+      containers:
+      - name: aws-cli
+        image: amazon/aws-cli
+        command: ["sleep", "infinity"]

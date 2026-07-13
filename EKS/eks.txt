@@ -746,6 +746,57 @@ minReadySeconds : How long a new pod must run without crashing before considered
 progressDeadlineSeconds : max time for a deployment to make progress. Id this time exceeds, deployment markes as failure.
 terminationGracePeriodSeconds : Time given to the container for graceful shutdown, before its being killed.
 
+===========================
+
+D: 13/07/2026
+
+
+IRSA : IAM role for Service Account: Our pods can assume an IAM role and access services i.e; s3, dynamodb or other service.. 
+This is similar to AWS EC2 IAM Role option.
+
+eksctl create iamserviceaccount --name s3-access-sa --namespace default --cluster ekswithavinash --region ap-south-1 --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess --approve --override-existing-serviceaccounts
+
+---
+
+Ingress : 
+
+CLusterIP : Works only within the cluster.
+NodePort : Deliver app with Instance public IP. 
+LoadBalancer : For every service, we need a load balancer. (AWS Classic Load Balancer)
+
+INgress : One ALB (Application Load Balancer) for many services (Path Based, Host)
+
+Ingress support 2 types of modes:
+
+1. IP Based Routing
+2. Path Based Routing
+
+
+
+Step 1 : create a Policy in aws account with required permissions for Loadbalancer controller.
+
+aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
+
+arn:aws:iam::655700896650:policy/AWSLoadBalancerControllerIAMPolicy
+
+Step 2 : create aservice account with the policy we created at step 1. 
+
+eksctl create iamserviceaccount --name aws-load-balancer-controller --namespace kube-system --cluster ekswithavinash --region ap-south-1 --attach-policy-arn arn:aws:iam::655700896650:policy/AWSLoadBalancerControllerIAMPolicy --approve --override-existing-serviceaccounts
+
+step 3 : Install aws load balancer controller using helm
+
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update eks
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=ekswithavinash --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller 
+
+
+
+Create table in dynamodb
+
+Table Name: aviz-students
+part key: StudentId
+
 
 
 

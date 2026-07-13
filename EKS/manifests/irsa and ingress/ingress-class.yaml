@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1
+apiversion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: aviz-ingress
@@ -7,29 +7,18 @@ metadata:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:655700896650:certificate/69de2863-c4c6-4260-9b90-2396b2a70eb8
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-
-spec:
+spec: 
   rules:
     - host: students.awswithavinashreddy.com
       http:
         paths:
           - path: /
-            pathType: Prefix
+            PathType: prefix
             backend:
               service:
                 name: aviz-service
                 port:
                   number: 80
-    - host: cal.awswithavinashreddy.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: cal-service
-                port:
-                  number: 8080
