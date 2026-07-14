@@ -797,6 +797,24 @@ Create table in dynamodb
 Table Name: aviz-students
 part key: StudentId
 
+======================
+
+D: 14/07/2026
+
+DNS Name format of a service : 
+
+1. Deploy the dns.yaml
+
+<servicename>.<namespace>.svc.<cluster-domain>
+backend.default.svc.cluster.local
+
+when frontend try to send any request to backend, it can simple use "http://backened"
+
+
+curl http://backend
+curl http://backend.default.svc.cluster.local
+
+----
 
 
 
