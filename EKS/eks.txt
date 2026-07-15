@@ -814,9 +814,73 @@ when frontend try to send any request to backend, it can simple use "http://back
 curl http://backend
 curl http://backend.default.svc.cluster.local
 
-----
+============================
+
+D: 15/07/2026
+
+eksctl create cluster --name=ekswithavinash --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myfirstnodegrp --node-type c7i-flex.large --nodes 2 --node-ami-family=AmazonLinux2023 --managed
+
+eksctl create cluster --name=ekswithavinash-uat --version 1.35 --region ap-south-1 --zones=ap-south-1a,ap-south-1b --nodegroup-name myfirstnodegrp --node-type c7i-flex.large --nodes 2 --node-ami-family=AmazonLinux2023 --managed
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster ekswithavinash --approve
 
 
+
+kubeconfig location : ~/.kube/config
+
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash --alias dev-cluster
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash-uat --alias uat-cluster
+
+
+kubectl config get-contexts				--> show current context
+
+kubectl --context=dev-cluster get pods -n kube-system	--> picks dev context and run kubectl get pods cmd
+kubectl --context=uat-cluster get pods -n kube-system	--> picks uat context and run kubectl get pods cmd
+
+kubectl --context=dev-cluster get svc -A
+kubectl --context=dev-cluster get nodes
+
+
+kubectl config use-context dev-cluster		--> switch context to dev cluster
+kubectl config use-context uat-cluster		--> switch context to uat cluster
+
+
+kubectl --context=dev-cluster get pods && kubectl --context=uat-cluster get pods
+
+
+kubectl config set-context dev-cluster --namespace=myapp		--> set default namespace for context
+kubectl config set-context uat-cluster --namespace=uatns		--> set default namespace for context
+
+kubectl config rename-context dev-cluster dev2-cluster			--> Rename a context
+
+
+kubectl config view						--> view kube config
+kubectl config view	 --raw					--> view kube config
+
+---------------
+
+Launch an ec2 instance and attach an IAM role with EKS read permisisons.. 
+
+aws eks update-kubeconfig --region ap-south-1 --name ekswithavinash --alias dev-cluster
+
+ec2 instance
+      |_ Has an IAM Instance role attached
+                |
+                |_That IAM role has EKS permissions (Policy)
+                            |
+                            |_ Is that IAM Role also Mapped Inside EKS (RBAC)
+                                        |
+                                        |_ Kubectl start works
+
+
+aws-auth configMap : Older eks versions <1.30, We have to map IAM ROle/users inside a ConfigMap.
+EKS Access Entries : IAM principals managed by AWS API, Recommended method.
+
+
+kubectl auth can-i get pods
+kubectl auth can-i create pods
+kubectl auth can-i create deployments
+kubectl auth can-i "*" "*"
 
 
 
