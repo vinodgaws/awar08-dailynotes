@@ -970,6 +970,67 @@ open port 8001 in SG
 
 ========================
 
+o11y : Observebility : 
+
+Metrics : numbers, graphs	: What is happening.?
+logs	: text records		: Why is it happening.?
+Traces	: flow graph		: Where did it break.?
+
+
+CW Agent is AWS Native Monitoring, logging, alerting via SNS.
+
+CW 011y agent sends metrics, logs and traces to Cloudwatch service. 
+
+Make sure your EKs nodes has "cloudwatchagentserverpolicy" attached.
+
+--> Install add-on
+
+aws eks create-addon --addon-name amazon-cloudwatch-observability --cluster-name ekswithavinash --region ap-south-1 --force
+
+kubectl get all -n amazon-cloudwatch
+
+CW Agent helps to get Node, POd, Cotnainer level metrics. 
+
+--> FluentBit : A lightweight, high performance log processor. This also runs as Daemonset (one pod per node). It collect logs from "/var/log/containers/" on each node. Then it sends to CW logs. 
+ 
+
+/aws/containerinsights/ekswithavinash/application		--> stdout, stderr, concolelog(), ERROR, exception
+/aws/containerinsights/ekswithavinash/host				--> system level logs at nodes
+/aws/containerinsights/ekswithavinash/dataplane			--> kubelet, kube-proxy, container runtime
+/aws/containerinsights/ekswithavinash/performance		--> 
+
+aws logs tail /aws/containerinsights/ekswithavinash/application --follow --filter-pattern "error"
+
+aws logs tail /aws/containerinsights/ekswithavinash/dataplane --follow --filter-pattern "kubelet"
+
+---------
+
+How to enable controlplane logs.
+
+Control plane logs: When we create an EKS cluster, we do this as first thing. all logs stores in Cloudwatch logs group.
+
+=====================
+
+Prometheus : Open source metrics colletion and alerting (alert manager)
+Grafana : Ope source visualisation and dashboard generation service. 
+
+
+Prometheus:
+Data Store : TSTB (Time Series Database)
+Query : PromQL to query the metrics
+Pull Based : Prometheous scapes pulls the metrics from targets (pod / node)
+alert manager : Send alerts to email (twillo) and Slack (free)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
