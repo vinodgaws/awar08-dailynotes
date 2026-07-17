@@ -1021,7 +1021,7 @@ Query : PromQL to query the metrics
 Pull Based : Prometheous scapes pulls the metrics from targets (pod / node)
 alert manager : Send alerts to email (twillo) and Slack (free)
 
-
+=============
 
 
 
