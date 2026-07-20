@@ -1023,6 +1023,70 @@ alert manager : Send alerts to email (twillo) and Slack (free)
 
 =============
 
+D: 20/07/2026
+
+
+EFS for shared content for K8s Pods. 
+
+--> Make sure to Add "EBSCSI" and "EFSCSI" roles to EKS Nodes Role. 
+--> Create a SG for EFS, Make sure to open VPC CIDR for NFS port 2049 at EFS SG.
+
+aws eks create-addon --cluster-name ekswithavinash --addon-name aws-ebs-csi-driver --region ap-south-1
+
+aws eks create-addon --cluster-name ekswithavinash --addon-name aws-efs-csi-driver --region ap-south-1
+
+
+CNI : Container Network Interface : Dynamically provisions IP add and sets up po to pod communication across nodes. AWS VPC CNI, Calico, cilium
+CSI : Container Storage interface : Automates the lifecycle of persistent storage blocks or file system. EBS / EFS. 
+
+
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+	name: efs-sc
+provisioner: efs.csi.aws.com
+parameters:
+	provisioningMode: efs-ap
+	fileSystemId: fs-0cf9f9a7a522948a3
+	directoryperms: "700"
+
+==========================
+
+
+Create the cluster and perform OIDC approval.
+
+
+Step 1 : Create namespace and verify. 
+
+Step 2 : Create ConfigMap and Secrets.
+
+Step 3 : 
+Enable EBS CSI Driver at EKS CLuster and patch it to use gp2 storage class. 
+
+kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+
+Then Deploy, postgres as statefulset.
+
+
+Step 4 : Create EFS, 
+Enable EFS CSI Driver at EKS CLuster, Deploy efs storage.
+
+Step 5 : Deploy backend and HPA. 
+
+Step 6 : Deploy frontned. 
+
+Step 7 : Deploy alb ingress controller (create irsa, add helm chart, deploy alb-controller) and verfy the status.
+
+Step 8 : update the ingress with ACM Certificate and your domain name.
+Create a Certificate in ACM for your domain name
+
+
+
+
+
+
 
 
 
