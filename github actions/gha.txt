@@ -1,0 +1,190 @@
+
+
+
+DevOps : 
+
+SDLC : 
+Planning
+analysis
+Design
+Implementation
+testing & integration
+Maintenance
+
+sandbox/traing --> Dev --> Qa --> SIt --> UAT --> Prd
+
+
+Waterfall Methodology : 10 pages website.. We build all 10 pages and deliver 10 pages to client.. 
+
+Agile methodology : 10 pages website.. We take only 1 page at a time.. We involve client to review.. 
+
+Sprint planning : Sprint goal, Sprint plan, Product backlog items..
+Daily Scrum : Daily 15 min meerting.. your progress towards sprint goal.. Actionable plan for next day..
+Sprint Review : Sprint outcome.. Next sprint plan, Product backlog for next sprint..
+Sprint retrospective : Review backlog items and plan to increase quality..
+
+DevOps methodology: 
+Slow release recycle issues fixed
+Eliminated manual build and deployment process
+Dev and Ops team need to work together to deliver
+Early issue detection
+
+----
+
+CICD
+
+CI : Contineous Integration
+
+CD : Contineous Delivery : After CI, There is a manual step involved to perform deployment.
+	 Contineous Deployment : After CI, Deployment will happen automatically, No manual action.
+	 
+===============
+
+github actions: GHA is a CICD platform build on github. THis can track changes/activities happening on our code and perform the automated job. 
+
+--> It has native github integration
+--> YAML configuration
+--> marketplace has lot of pre-build actions, This can save lot of hours. 
+--> multi-os matrix build : (v1 v2 v3... win, amazonlinux, ubuntu)
+--> Unlimited githu action runs for public repos.. Private: 2000 minutes/month..
+
+---
+
+
+workflow : A job to automate our processes, We define process in a single YAML file. THis file should be in this location : repo --> .github --> workflows --> xyz.yaml
+
+---
+
+event : An event is the trogger that starts our workflow. 
+
+
+push				: When any code changes pushed to central repo.
+pull request		: When any PR is created.
+schedule			: Run at a specific time using cron
+workflow_dispatch	: Manually trigger by user
+
+---
+
+Job : A job contains multiple steps that runs on a runner. 
+
+job 
+1. verifying code quality			--> step
+2. send alert						--> step
+3. print result						--> step
+
+Step : A single task inside a job. 
+
+---
+
+Runner : This is a virtual machine that executes our jobs. These are micro VMs (small vm/container)
+
+GH Hosted runners : ubuntu, windows, macos
+self-hosted runners : we can configure our server / ec2 to perform the job, its called self hosted runner. 
+
+https://github.com/actions/runner-images
+
+---
+
+Actions : Its a reusable code that does a specific task (i.e; configuring nodejs, configuring aws credentials).. Instead of performing manully with multiple steps, you can depend on this.
+
+
+actions/checkout@v7			--> checkout repo code
+actions/setup-node@v4		--> setup nodejs
+
+===================
+
+
+workflow
+event : push, pr
+job 
+steps
+runner
+action
+
+
+===========
+
+name: MyFirst Workflow
+
+on: push
+
+jobs:
+  myfirstjob:
+    runs-on: ubuntu-24.04
+    steps:
+        - name: Print my name
+          run: echo "hello, Am Avinash and Am learning GHA"
+
+---------
+
+on:
+	pull_request:
+		branches:
+			- main
+			- feature
+			
+------
+
+on: workflow_dispatch
+
+-----
+
+on:
+	schedule:
+		- cron: '0 9 * * 1'
+
+-----
+
+on:
+    push:
+        branches: [main, feature]
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+
+====================
+
+
+name: MyFirst Workflow
+
+on:
+    push:
+        branches: [main, feature]
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+
+jobs:
+  myfirstjob:
+    runs-on: ubuntu-24.04
+    steps:
+        - name: Print my name
+          run: echo "hello, Am Avinash and Am learning GHA"
+		  
+
+================
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
