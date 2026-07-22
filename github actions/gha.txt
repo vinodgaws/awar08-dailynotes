@@ -164,18 +164,82 @@ jobs:
 
 ================
 
-    
+conditional workflow demo
+----------------
+name: Conditional Workflow
 
+on:
+    push:
+        branches: ["*"]
 
+jobs:
+  run-always:
+    runs-on: ubuntu-24.04
+    steps:
+        - name: Print my name
+          run: echo "This job is running always"
 
+  only-on-main:
+    runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/main'
+    steps:
+        - name: Print my name
+          run: echo "This job is running only on main branch"
+		  
 
+============================    
 
+D: 22/07/2026
 
+Using marketplace actions
 
+name: Node Js Setup
 
+on:
+  push:
+    branches: ["*"]
 
+jobs:
+    node-setup:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                node-version: '22'
+            - run: npm install
+            - run: node index.js
 
+====================================
 
+GHA has 3 types of variables:
+
+workflow variables : We can define in our YAML file. 		$VAR_NAME
+	--> JOB Level, Workflow Level and Step level
+Configuration variables : IN Github UI under settings		${{ vars.VAR_NAME }}
+Context variables : prebuild, provided by github			${{ github.VAR_NAME }}
+
+=============================
+
+Github hosted runner : github gives us a VM, THat VM runs our job, Once job done, it Destroys.
+--> We can run single job for max of 6 hrs only.
+
+Self-Hosted Runner : You setup your own server/instance, Github sends the job to it, Our machiene runs the job --> Machiene always stays alive.
+--> We can access our VPC resources / DBs.
+--> we can choose our own HW configs / OS configs
+--> we can have pre-installed tools (kubectl, Docker). 
+
+Launch an ec2 instance and identify the instance architecture
+
+uname -m
+
+download and unzip the package
+
+make sure to verify the dependencies
+
+sudo ./bin/installdependencies.sh
+
+sudo dnf install dotnet-sdk-8.0 -y
 
 
 
