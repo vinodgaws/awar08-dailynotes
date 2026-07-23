@@ -241,6 +241,64 @@ sudo ./bin/installdependencies.sh
 
 sudo dnf install dotnet-sdk-8.0 -y
 
+==============================================
+
+D: 23/07/2026
+
+OIDC (OpenID Connect) : USing OIDC we can access aws environment resources using an IAM role.. 
+
+Step 1 : Create an Identity provider. Choose "OpenID Connect" as type.
+
+Provider Type: OIDC
+Provider URL: https://token.actions.githubusercontent.com
+Audience: sts.amazonaws.com
+
+Step 2 : Create an IAM Role for GHA. 
+
+entity type: Web identity
+Provider : token.actions.githubusercontent.com
+Audience: sts.amazonaws.com
+GitHub organization : <yout github account username> : avizway1
+
+Attach required policy: S3readonly role
+
+
+Step 3 : Create and keep your IAM role. 
+
+arn:aws:iam::655700896650:role/awar08-gha-role
+
+
+===========================
+
+
+
+
+
+use below code in workflow to establish secure connection to AWS.
+
+permissions:
+	id-token: write
+	contents: read
+
+- name: Configure AWS using OIDC
+  uses: aws-actions/configure-aws-credentials@v6
+  with:
+      aws-region: ap-south-1
+      role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
